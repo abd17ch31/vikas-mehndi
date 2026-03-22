@@ -147,7 +147,7 @@ export function OurWorkPage() {
         </section>
 
         <section className="mx-auto mt-8 max-w-7xl">
-          <div className="grid gap-y-9 gap-x-6 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-y-16 gap-x-6 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
             {workCards.map((card, index) => (
               <button
                 key={card.id}
