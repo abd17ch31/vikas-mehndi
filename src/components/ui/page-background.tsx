@@ -1,8 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { ShootingStars } from "@/components/ui/shooting-stars";
 
 export function PageBackground() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#fff1c8]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.28),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(251,146,60,0.18),transparent_28%),linear-gradient(180deg,#fff6d9_0%,#ffefc8_48%,#ffe8bb_100%)]" />
@@ -19,14 +34,16 @@ export function PageBackground() {
         minDelay={1200}
         maxDelay={2800}
       />
-      <ShootingStars
-        starColor="#d97706"
-        trailColor="#f59e0b"
-        minSpeed={10}
-        maxSpeed={20}
-        minDelay={1800}
-        maxDelay={3600}
-      />
+      {isMobile ? null : (
+        <ShootingStars
+          starColor="#d97706"
+          trailColor="#f59e0b"
+          minSpeed={10}
+          maxSpeed={20}
+          minDelay={1800}
+          maxDelay={3600}
+        />
+      )}
     </div>
   );
 }

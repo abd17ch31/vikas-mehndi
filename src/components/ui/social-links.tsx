@@ -64,6 +64,8 @@ const AnimatedSocialLinks = React.forwardRef<
             <img
               src={social.image}
               alt={social.name}
+              loading="lazy"
+              decoding="async"
               className="size-7 rounded-full object-contain bg-white/90 p-1 shadow-sm sm:size-8"
             />
             <span className="block text-base font-medium text-[#5a2a17] sm:text-lg">
@@ -80,6 +82,8 @@ const AnimatedSocialLinks = React.forwardRef<
                   key={social.name}
                   src={social.image}
                   alt={social.name}
+                  loading="lazy"
+                  decoding="async"
                   className="size-14 rounded-full bg-white/95 p-2 shadow-lg sm:size-16"
                   initial={{
                     y: -34,

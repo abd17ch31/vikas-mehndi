@@ -164,6 +164,8 @@ export function OurWorkPage() {
                     <img
                       src={card.cover}
                       alt={card.title}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#3d1f14]/86 via-[#3d1f14]/18 to-transparent" />

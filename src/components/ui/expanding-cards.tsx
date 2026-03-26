@@ -101,6 +101,8 @@ export const ExpandingCards = React.forwardRef<
           <img
             src={item.imgSrc}
             alt={item.title}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 h-full w-full scale-110 object-cover grayscale transition-all duration-300 ease-out group-data-[active=true]:scale-100 group-data-[active=true]:grayscale-0"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#12070a]/90 via-[#12070a]/35 to-transparent" />

@@ -142,6 +142,8 @@ export default function AboutSection1() {
           <img
             src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=687&auto=format&fit=crop"
             alt="Artist portrait"
+            loading="lazy"
+            decoding="async"
             className="h-full w-full rotate-2 object-cover"
           />
         </TimelineContent>
@@ -155,6 +157,8 @@ export default function AboutSection1() {
           <img
             src="https://images.unsplash.com/photo-1609179242555-1d7b4b0a568c?q=80&w=687&auto=format&fit=crop"
             alt="Artist portrait"
+            loading="lazy"
+            decoding="async"
             className="h-full w-full -rotate-2 object-cover"
           />
         </TimelineContent>
@@ -168,6 +172,8 @@ export default function AboutSection1() {
           <img
             src="https://images.unsplash.com/photo-1611695434398-4f4b330623e6?q=80&w=735&auto=format&fit=crop"
             alt="Artist portrait"
+            loading="lazy"
+            decoding="async"
             className="h-full w-full -rotate-2 object-cover"
           />
         </TimelineContent>
@@ -181,6 +187,8 @@ export default function AboutSection1() {
           <img
             src="https://images.unsplash.com/photo-1567934872913-aacea74458b7?q=80&w=687&auto=format&fit=crop"
             alt="Artist portrait"
+            loading="lazy"
+            decoding="async"
             className="h-full w-full rotate-2 object-cover"
           />
         </TimelineContent>
