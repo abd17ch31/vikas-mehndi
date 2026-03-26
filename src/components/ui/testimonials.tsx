@@ -63,6 +63,11 @@ export function Testimonials({
           )}
         >
           {visibleTestimonials.map((testimonial, index) => (
+            (() => {
+              const SocialIcon = index % 2 === 0 ? Icons.instagram : Icons.google;
+              const socialLabel = index % 2 === 0 ? "Instagram" : "Google";
+
+              return (
             <Card
               key={`${testimonial.username}-${index}`}
               className="relative h-full rounded-[1.7rem] border border-amber-300/25 bg-white/75 p-5 text-[#5a2a17] shadow-[0_20px_60px_rgba(182,117,47,0.12)] backdrop-blur-md"
@@ -86,9 +91,9 @@ export function Testimonials({
                   type="button"
                   onClick={() => openInNewTab(testimonial.social)}
                   className="rounded-full border border-amber-300/25 bg-[#fff7eb] p-2 text-[#9a5a1a] transition hover:text-[#7d4214]"
-                  aria-label={`Open social profile for ${testimonial.name}`}
+                  aria-label={`Open ${socialLabel} profile for ${testimonial.name}`}
                 >
-                  <Icons.twitter className="h-4 w-4 fill-current" aria-hidden="true" />
+                  <SocialIcon className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
 
@@ -98,6 +103,8 @@ export function Testimonials({
                 </p>
               </div>
             </Card>
+              );
+            })()
           ))}
         </div>
 

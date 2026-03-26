@@ -7,7 +7,6 @@ import { Eye, X } from "lucide-react";
 import StellarCardGallery from "@/components/ui/3d-image-gallery";
 import { FooterTapedDesign } from "@/components/ui/footer-taped-design";
 import { SiteNavbar } from "@/components/ui/site-navbar";
-import { GlowCard } from "@/components/ui/spotlight-card";
 
 type WorkCard = {
   id: string;
@@ -148,37 +147,31 @@ export function OurWorkPage() {
 
         <section className="mx-auto mt-8 max-w-7xl">
           <div className="grid gap-y-16 gap-x-6 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {workCards.map((card, index) => (
+            {workCards.map((card) => (
               <button
                 key={card.id}
                 type="button"
                 onClick={() => setActiveCard(card)}
-                className="text-left"
+                className="overflow-hidden rounded-[1.8rem] border border-amber-200/40 bg-white/70 p-0 text-left shadow-[0_18px_50px_rgba(120,71,28,0.12)] transition-transform duration-300 hover:-translate-y-1"
               >
-                <GlowCard
-                  glowColor={index % 2 === 0 ? "orange" : index % 3 === 0 ? "purple" : "blue"}
-                  customSize
-                  className="h-[340px] w-full overflow-hidden rounded-[1.8rem] bg-white/70 p-0"
-                >
-                  <div className="relative h-full w-full overflow-hidden rounded-[1.6rem]">
-                    <img
-                      src={card.cover}
-                      alt={card.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#3d1f14]/86 via-[#3d1f14]/18 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-                      <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.22em] backdrop-blur">
-                        <Eye className="h-3.5 w-3.5" />
-                        Open Gallery
-                      </div>
-                      <h2 className="mt-4 text-2xl font-semibold">{card.title}</h2>
-                      <p className="mt-2 text-sm text-white/82">{card.subtitle}</p>
+                <div className="relative h-[340px] w-full overflow-hidden rounded-[1.6rem]">
+                  <img
+                    src={card.cover}
+                    alt={card.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#3d1f14]/86 via-[#3d1f14]/18 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.22em] backdrop-blur">
+                      <Eye className="h-3.5 w-3.5" />
+                      Open Gallery
                     </div>
+                    <h2 className="mt-4 text-2xl font-semibold">{card.title}</h2>
+                    <p className="mt-2 text-sm text-white/82">{card.subtitle}</p>
                   </div>
-                </GlowCard>
+                </div>
               </button>
             ))}
           </div>
