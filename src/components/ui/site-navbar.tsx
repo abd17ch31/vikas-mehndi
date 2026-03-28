@@ -5,8 +5,6 @@ import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-import logo from "@/assets/hero.png";
-
 const NAV_LINKS = [
   { label: "Home", type: "route", href: "/" },
   { label: "About", type: "route", href: "/why-choose-us" },
@@ -34,7 +32,7 @@ export function SiteNavbar({ absolute = false }: SiteNavbarProps) {
           <div className="flex items-center justify-between gap-4">
             <Link to="/" className="flex min-w-0 items-center gap-3">
               <img
-                src={logo}
+                src="/assets/hero.png"
                 alt="Vikas Mehandi Art logo"
                 className="h-11 w-11 rounded-full border border-amber-300/35 object-cover shadow-[0_10px_30px_rgba(182,117,47,0.16)]"
               />

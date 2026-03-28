@@ -5,7 +5,7 @@ import { Testimonials, type Testimonial } from "@/components/ui/testimonials";
 const indianTestimonials: Testimonial[] = [
   {
     image:
-      "./src/assets/images/test-2.png",
+      "/assets/images/test-2.png",
     text:
       "My bridal mehndi came out exactly the way I imagined. The detailing was so neat, and the stain turned out beautifully for every wedding function.",
     name: "Aarohi Sharma",
@@ -14,7 +14,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-1.png",
+      "/assets/images/test-1.png",
     text:
       "We booked for an engagement event and the whole experience felt calm, professional, and so elegant. Everyone kept asking who did the mehndi.",
     name: "Riya Mehta",
@@ -23,7 +23,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-3.png",
+      "/assets/images/test-3.png",
     text:
       "The guest mehndi service was smooth and well managed. Designs were quick, stylish, and matched the festive mood perfectly.",
     name: "Preeti Arora",
@@ -32,7 +32,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-     "./src/assets/images/test-4.png",
+     "/assets/images/test-4.png",
     text:
       "What stood out for us was the balance of speed and detail. The portrait mehndi concept looked premium and very special in our photos.",
     name: "Ishaani Kapoor",
@@ -41,7 +41,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-5.png",
+      "/assets/images/test-5.png",
     text:
       "I booked for Karwa Chauth and loved how graceful the designs felt. The finishing was clean, and the aftercare guidance really helped.",
     name: "Nandini Joshi",
@@ -50,7 +50,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-6.png",
+      "/assets/images/test-6.png",
     text:
       "For our family baby shower, the designs felt festive without being overdone. It looked polished and suited every age group.",
     name: "Preeti Bansal",
@@ -59,7 +59,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-7.png",
+      "/assets/images/test-7.png",
     text:
       "The bridal booking was one of the easiest parts of our wedding planning. The artist understood references quickly and delivered beautifully.",
     name: "Mehak Arora",
@@ -68,7 +68,7 @@ const indianTestimonials: Testimonial[] = [
   },
   {
     image:
-      "./src/assets/images/test-8.png",
+      "/assets/images/test-8.png",
     text:
       "I appreciated how the mehndi design was tailored to the event instead of feeling generic. It felt thoughtful and photo-ready.",
     name: "Devika Malhotra",

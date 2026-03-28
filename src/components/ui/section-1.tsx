@@ -3,12 +3,12 @@
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
 
 const SHOWCASE_IMAGES = [
-  "./src/assets/images/h6.jpeg",
-  "./src/assets/images/h1.jpeg",
-  "./src/assets/images/h2.jpeg",
-  "./src/assets/images/h3.jpeg",
-  "./src/assets/images/h4.jpeg",
-  "./src/assets/images/h5.jpeg",
+  "/assets/images/h6.jpeg",
+  "/assets/images/h1.jpeg",
+  "/assets/images/h2.jpeg",
+  "/assets/images/h3.jpeg",
+  "/assets/images/h4.jpeg",
+  "/assets/images/h5.jpeg",
  
 ];
 

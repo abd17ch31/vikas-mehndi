@@ -7,7 +7,7 @@ const galleryData: GalleryItem[] = [
     common: "Bridal Story",
     binomial: "Full bridal detailing",
     photo: {
-      url: "./src/assets/images/hg-1.jpeg",
+      url: "/assets/images/hg-1.jpeg",
       text: "bridal mehndi inspired portrait styling",
       pos: "47% 35%",
       by: "Unsplash",
@@ -17,7 +17,7 @@ const galleryData: GalleryItem[] = [
     common: "Engagement Glow",
     binomial: "Elegant celebration styling",
     photo: {
-      url: "./src/assets/images/hg-engagement.jpeg",
+      url: "/assets/images/hg-engagement.jpeg",
       text: "engagement inspired mehndi styling",
       pos: "60% 40%",
       by: "Unsplash",
@@ -27,7 +27,7 @@ const galleryData: GalleryItem[] = [
     common: "Festive Mood",
     binomial: "Quick festive patterns",
     photo: {
-      url: "./src/assets/images/hg-festival.jpeg",
+      url: "/assets/images/hg-festival.jpeg",
       text: "festive fashion portrait",
       pos: "53% 43%",
       by: "Unsplash",
@@ -37,7 +37,7 @@ const galleryData: GalleryItem[] = [
     common: "Portrait Work",
     binomial: "Signature hand artistry",
     photo: {
-      url: "./src/assets/images/hg-portrait.jpeg",
+      url: "/assets/images/hg-portrait.jpeg",
       text: "portrait inspired bridal styling",
       pos: "55% 36%",
       by: "Unsplash",
@@ -47,7 +47,7 @@ const galleryData: GalleryItem[] = [
     common: "Wedding Guest",
     binomial: "Elegant guest designs",
     photo: {
-      url: "./src/assets/images/hg-guest.jpeg",
+      url: "/assets/images/hg-guest.jpeg",
       text: "guest celebration styling",
       pos: "50% 28%",
       by: "Unsplash",
@@ -57,7 +57,7 @@ const galleryData: GalleryItem[] = [
     common: "Ceremony Look",
     binomial: "Traditional inspired finish",
     photo: {
-      url: "./src/assets/images/hg-ceremony.jpeg",
+      url: "/assets/images/hg-ceremony.jpeg",
       text: "ceremony styling portrait",
       pos: "47%",
       by: "Unsplash",
@@ -67,7 +67,7 @@ const galleryData: GalleryItem[] = [
     common: "Baby Shower",
     binomial: "Welcoming babies with love",
     photo: {
-      url: "./src/assets/images/hg-baby.jpeg",
+      url: "/assets/images/hg-baby.jpeg",
       text: "celebration portrait styling",
       pos: "58% 35%",
       by: "Unsplash",
@@ -77,7 +77,7 @@ const galleryData: GalleryItem[] = [
     common: "Guest Glam",
     binomial: "Family function elegance",
     photo: {
-      url: "./src/assets/images/hg-guest-2.jpeg",
+      url: "/assets/images/hg-guest-2.jpeg",
       text: "guest glam inspired fashion portrait",
       pos: "50% 40%",
       by: "Unsplash",

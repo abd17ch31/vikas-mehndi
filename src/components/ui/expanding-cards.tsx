@@ -143,7 +143,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Full bridal mehndi with intricate palms, feet, and personalized motifs for wedding functions and portraits.",
     imgSrc:
-      "./src/assets/images/cat-bridal.jpeg",
+      "/assets/images/cat-bridal.jpeg",
     icon: <Gem size={24} />,
     linkHref: "#book-appointment",
   },
@@ -153,7 +153,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Stylish engagement designs that feel elegant, balanced, and camera-ready for rings, couple shots, and celebrations.",
     imgSrc:
-      "./src/assets/images/cat-engagement.jpeg",
+      "/assets/images/cat-engagement.jpeg",
     icon: <HandHeart size={24} />,
     linkHref: "#book-appointment",
   },
@@ -163,7 +163,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Custom portrait mehndi concepts created with careful detailing for standout bridal storytelling and signature looks.",
     imgSrc:
-      "./src/assets/images/cat-portrait.jpeg",
+      "/assets/images/cat-portrait.jpeg",
     icon: <Sparkles size={24} />,
     linkHref: "#book-appointment",
   },
@@ -173,7 +173,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Soft celebratory mehndi styling for godh bharai and family events with graceful patterns and occasion-focused charm.",
     imgSrc:
-      "./src/assets/images/cat-baby.jpeg",
+      "/assets/images/cat-baby.jpeg",
     icon: <Baby size={24} />,
     linkHref: "#book-appointment",
   },
@@ -183,7 +183,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Quick festive designs for Teej, Karwa Chauth, Diwali, and seasonal celebrations with rich ornamental flow.",
     imgSrc:
-      "./src/assets/images/cat-stylish.jpeg",
+      "/assets/images/cat-stylish.jpeg",
     icon: <PartyPopper size={24} />,
     linkHref: "#book-appointment",
   },
@@ -193,7 +193,7 @@ export const mehndiServices: CardItem[] = [
     description:
       "Guest mehndi packages for wedding groups, friends, and family members with coordinated, polished event designs.",
     imgSrc:
-      "./src/assets/images/cat-guest.jpeg",
+      "/assets/images/cat-guest.jpeg",
     icon: <Users size={24} />,
     linkHref: "#book-appointment",
   },

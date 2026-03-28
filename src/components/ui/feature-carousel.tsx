@@ -30,7 +30,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Bridal",
     icon: Gem,
     image:
-      "./src/assets/Services/bridal.png",
+      "/assets/Services/bridal.png",
     description: "Detailed bridal mehndi crafted for the biggest day of your celebration.",
     popupTitle: "Bridal Mehndi",
     popupText:
@@ -41,7 +41,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Engagement",
     icon: HeartHandshake,
     image:
-      "./src/assets/Services/engagement.png",
+      "/assets/Services/engagement.png",
     description: "Graceful engagement designs with a polished, celebration-ready finish.",
     popupTitle: "Engagement Mehndi",
     popupText:
@@ -52,7 +52,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Portrait",
     icon: Camera,
     image:
-      "./src/assets/Services/portrait.jpeg",
+      "/assets/Services/portrait.jpeg",
     description: "Custom portrait mehndi concepts with signature artistic detailing.",
     popupTitle: "Portrait Mehndi",
     popupText:
@@ -63,7 +63,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Festival",
     icon: PartyPopper,
     image:
-      "./src/assets/Services/festival.png",
+      "/assets/Services/festival.png",
     description: "Quick yet beautiful festive mehndi for Teej, Karwa Chauth, Diwali, and more.",
     popupTitle: "Festival Mehndi",
     popupText:
@@ -74,7 +74,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Baby Shower",
     icon: Flower2,
     image:
-      "./src/assets/Services/baby.jpeg",
+      "/assets/Services/baby.jpeg",
     description: "Soft and celebratory motifs created for baby shower events and family gatherings.",
     popupTitle: "Baby Shower Mehndi",
     popupText:
@@ -85,7 +85,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Guest",
     icon: Brush,
     image:
-      "./src/assets/Services/Guest.jpeg",
+      "/assets/Services/Guest.jpeg",
     description: "Stylish guest mehndi arranged for families, friends, and group bookings.",
     popupTitle: "Guest Mehndi",
     popupText:
