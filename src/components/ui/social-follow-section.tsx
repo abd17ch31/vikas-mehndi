@@ -6,7 +6,7 @@ const socials: Social[] = [
   {
     name: "Instagram",
     image: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png",
-    href: "https://www.instagram.com/",
+    href: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
   },
   {
     name: "Facebook",

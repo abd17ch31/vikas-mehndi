@@ -102,7 +102,7 @@ export function FooterTapedDesign() {
 
         <div className="flex items-center gap-4">
           <a
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3"
             target="_blank"
             rel="nofollow noopener noreferrer"
             aria-label="Instagram"

@@ -30,7 +30,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Bridal",
     icon: Gem,
     image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/bridal.png",
     description: "Detailed bridal mehndi crafted for the biggest day of your celebration.",
     popupTitle: "Bridal Mehndi",
     popupText:
@@ -41,7 +41,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Engagement",
     icon: HeartHandshake,
     image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/engagement.png",
     description: "Graceful engagement designs with a polished, celebration-ready finish.",
     popupTitle: "Engagement Mehndi",
     popupText:
@@ -52,7 +52,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Portrait",
     icon: Camera,
     image:
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/portrait.jpeg",
     description: "Custom portrait mehndi concepts with signature artistic detailing.",
     popupTitle: "Portrait Mehndi",
     popupText:
@@ -63,7 +63,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Festival",
     icon: PartyPopper,
     image:
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/festival.png",
     description: "Quick yet beautiful festive mehndi for Teej, Karwa Chauth, Diwali, and more.",
     popupTitle: "Festival Mehndi",
     popupText:
@@ -74,7 +74,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Baby Shower",
     icon: Flower2,
     image:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/baby.jpeg",
     description: "Soft and celebratory motifs created for baby shower events and family gatherings.",
     popupTitle: "Baby Shower Mehndi",
     popupText:
@@ -85,7 +85,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     label: "Guest",
     icon: Brush,
     image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop",
+      "./src/assets/Services/Guest.jpeg",
     description: "Stylish guest mehndi arranged for families, friends, and group bookings.",
     popupTitle: "Guest Mehndi",
     popupText:

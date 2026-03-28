@@ -7,7 +7,7 @@ const galleryData: GalleryItem[] = [
     common: "Bridal Story",
     binomial: "Full bridal detailing",
     photo: {
-      url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-1.jpeg",
       text: "bridal mehndi inspired portrait styling",
       pos: "47% 35%",
       by: "Unsplash",
@@ -17,7 +17,7 @@ const galleryData: GalleryItem[] = [
     common: "Engagement Glow",
     binomial: "Elegant celebration styling",
     photo: {
-      url: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-engagement.jpeg",
       text: "engagement inspired mehndi styling",
       pos: "60% 40%",
       by: "Unsplash",
@@ -27,7 +27,7 @@ const galleryData: GalleryItem[] = [
     common: "Festive Mood",
     binomial: "Quick festive patterns",
     photo: {
-      url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-festival.jpeg",
       text: "festive fashion portrait",
       pos: "53% 43%",
       by: "Unsplash",
@@ -37,7 +37,7 @@ const galleryData: GalleryItem[] = [
     common: "Portrait Work",
     binomial: "Signature hand artistry",
     photo: {
-      url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-portrait.jpeg",
       text: "portrait inspired bridal styling",
       pos: "55% 36%",
       by: "Unsplash",
@@ -47,7 +47,7 @@ const galleryData: GalleryItem[] = [
     common: "Wedding Guest",
     binomial: "Elegant guest designs",
     photo: {
-      url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-guest.jpeg",
       text: "guest celebration styling",
       pos: "50% 28%",
       by: "Unsplash",
@@ -57,17 +57,17 @@ const galleryData: GalleryItem[] = [
     common: "Ceremony Look",
     binomial: "Traditional inspired finish",
     photo: {
-      url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-ceremony.jpeg",
       text: "ceremony styling portrait",
       pos: "47%",
       by: "Unsplash",
     },
   },
   {
-    common: "Celebration Edit",
-    binomial: "Occasion-ready design mood",
+    common: "Baby Shower",
+    binomial: "Welcoming babies with love",
     photo: {
-      url: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-baby.jpeg",
       text: "celebration portrait styling",
       pos: "58% 35%",
       by: "Unsplash",
@@ -77,7 +77,7 @@ const galleryData: GalleryItem[] = [
     common: "Guest Glam",
     binomial: "Family function elegance",
     photo: {
-      url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&auto=format&fit=crop&q=80",
+      url: "./src/assets/images/hg-guest-2.jpeg",
       text: "guest glam inspired fashion portrait",
       pos: "50% 40%",
       by: "Unsplash",

@@ -3,12 +3,13 @@
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
 
 const SHOWCASE_IMAGES = [
-  "./src/components/abc/forportfolioprroifle.jpg",
-  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=900&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80",
+  "./src/assets/images/h6.jpeg",
+  "./src/assets/images/h1.jpeg",
+  "./src/assets/images/h2.jpeg",
+  "./src/assets/images/h3.jpeg",
+  "./src/assets/images/h4.jpeg",
+  "./src/assets/images/h5.jpeg",
+ 
 ];
 
 export function Section1() {
