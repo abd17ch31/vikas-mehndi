@@ -11,7 +11,7 @@ import {
 } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Html, OrbitControls, Plane, Sphere } from "@react-three/drei";
+import { Environment, Html, OrbitControls, Sphere } from "@react-three/drei";
 import { Download, Heart, X } from "lucide-react";
 
 type GalleryCard = {
@@ -24,6 +24,8 @@ type GalleryCard = {
 type CardContextType = {
   selectedCard: GalleryCard | null;
   setSelectedCard: (card: GalleryCard | null) => void;
+  selectedIndex: number | null;
+  setSelectedIndex: (index: number | null) => void;
   cards: GalleryCard[];
 };
 
@@ -122,14 +124,16 @@ function StarfieldBackground() {
 
 function FloatingCard({
   card,
+  index,
   position,
 }: {
   card: GalleryCard;
+  index: number;
   position: { x: number; y: number; z: number };
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const { setSelectedCard } = useCard();
+  const { setSelectedIndex } = useCard();
 
   useFrame(({ camera }) => {
     if (groupRef.current) {
@@ -139,26 +143,6 @@ function FloatingCard({
 
   return (
     <group ref={groupRef} position={[position.x, position.y, position.z]}>
-      <Plane
-        args={[4.5, 6]}
-        onClick={(event) => {
-          event.stopPropagation();
-          setSelectedCard(card);
-        }}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerOut={(event) => {
-          event.stopPropagation();
-          setHovered(false);
-          document.body.style.cursor = "auto";
-        }}
-      >
-        <meshBasicMaterial transparent opacity={0} />
-      </Plane>
-
       <Html
         transform
         distanceFactor={10}
@@ -166,14 +150,32 @@ function FloatingCard({
         style={{
           transition: "all 0.3s ease",
           transform: hovered ? "scale(1.15)" : "scale(1)",
-          pointerEvents: "none",
+          pointerEvents: "auto",
         }}
       >
-        <div
-          className="select-none rounded-lg bg-[#1F2121] p-3 shadow-2xl"
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedIndex(index);
+          }}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+          }}
+          onPointerEnter={() => {
+            setHovered(true);
+            document.body.style.cursor = "pointer";
+          }}
+          onPointerLeave={() => {
+            setHovered(false);
+            document.body.style.cursor = "auto";
+          }}
+          className="select-none rounded-lg bg-[#1F2121] p-3 text-left shadow-2xl"
           style={{
             width: "160px",
             height: "208px",
+            touchAction: "manipulation",
             boxShadow: hovered
               ? "0 25px 50px rgba(49, 184, 198, 0.5), 0 0 30px rgba(49, 184, 198, 0.3)"
               : "0 15px 30px rgba(0, 0, 0, 0.6)",
@@ -190,16 +192,64 @@ function FloatingCard({
           <div className="mt-1 text-center">
             <p className="truncate text-xs font-medium text-white">{card.title}</p>
           </div>
-        </div>
+        </button>
       </Html>
     </group>
   );
 }
 
 function CardModal() {
-  const { selectedCard, setSelectedCard } = useCard();
+  const { selectedCard, setSelectedCard, selectedIndex, setSelectedIndex, cards } = useCard();
   const [isFavorited, setIsFavorited] = useState(false);
+  const [dragStartX, setDragStartX] = useState<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const activeIndex = selectedIndex ?? 0;
+
+  const setCardByIndex = (index: number) => {
+    const nextIndex = (index + cards.length) % cards.length;
+    setSelectedIndex(nextIndex);
+    setIsFavorited(false);
+  };
+
+  const handleSwipeEnd = (clientX: number) => {
+    if (dragStartX === null) return;
+
+    const swipeDistance = clientX - dragStartX;
+
+    if (swipeDistance < -45) {
+      setCardByIndex(activeIndex + 1);
+    }
+
+    if (swipeDistance > 45) {
+      setCardByIndex(activeIndex - 1);
+    }
+
+    setDragStartX(null);
+  };
+
+  useEffect(() => {
+    if (!selectedCard) return undefined;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedCard(null);
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        setCardByIndex(activeIndex - 1);
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        setCardByIndex(activeIndex + 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedCard, activeIndex, cards.length]);
 
   if (!selectedCard) return null;
 
@@ -212,20 +262,20 @@ function CardModal() {
         }
       }}
     >
-      <div className="relative mx-4 w-full max-w-md">
+      <div className="relative mx-4 w-full max-w-3xl">
         <button
           type="button"
           onClick={() => setSelectedCard(null)}
-          className="absolute -top-12 right-0 z-10 text-white transition-colors hover:text-gray-300"
+          className="absolute -top-12 right-0 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur transition-colors hover:bg-white/20 hover:text-gray-200"
           aria-label="Close selected card"
         >
-          <X className="h-8 w-8" />
+          <X className="h-7 w-7" />
         </button>
 
         <div style={{ perspective: "1000px" }} className="w-full">
           <div
             ref={cardRef}
-            className="relative w-full cursor-pointer rounded-[16px] bg-[#1F2121] p-4 transition-all duration-500 ease-out"
+            className="relative w-full cursor-pointer rounded-[20px] bg-[#1F2121] p-4 transition-all duration-500 ease-out sm:p-5"
             style={{
               transformStyle: "preserve-3d",
               boxShadow:
@@ -251,18 +301,39 @@ function CardModal() {
               cardRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
             }}
           >
-            <div className="relative mb-4 w-full" style={{ aspectRatio: "3 / 4" }}>
+            <div
+              className="relative mb-4 w-full cursor-grab touch-pan-y overflow-hidden rounded-[16px] active:cursor-grabbing"
+              style={{ aspectRatio: "16 / 10" }}
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                setDragStartX(event.clientX);
+              }}
+              onPointerUp={(event) => {
+                event.stopPropagation();
+                handleSwipeEnd(event.clientX);
+              }}
+              onPointerCancel={() => setDragStartX(null)}
+            >
               <img
                 loading="lazy"
-                className="absolute inset-0 h-full w-full rounded-[16px] bg-[#000000] object-cover"
+                className="absolute inset-0 h-full w-full bg-[#000000] object-contain"
                 alt={selectedCard.alt}
                 src={selectedCard.imageUrl}
+                draggable={false}
               />
+              <div className="pointer-events-none absolute inset-x-0 bottom-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-white/65">
+                Swipe to change image
+              </div>
             </div>
 
-            <h3 className="mb-4 text-center text-lg font-semibold text-white">
-              {selectedCard.title}
-            </h3>
+            <div className="mb-4 text-center">
+              <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#31b8c6]">
+                Image {activeIndex + 1} of {cards.length}
+              </p>
+              <h3 className="mt-2 text-lg font-semibold text-white">
+                {selectedCard.title}
+              </h3>
+            </div>
 
             <div className="flex gap-2">
               <a
@@ -288,6 +359,33 @@ function CardModal() {
                   fill={isFavorited ? "currentColor" : "none"}
                 />
               </button>
+            </div>
+
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+              {cards.map((card, index) => (
+                <button
+                  type="button"
+                  key={card.id}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setCardByIndex(index);
+                  }}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border transition ${
+                    index === activeIndex
+                      ? "border-[#31b8c6] opacity-100"
+                      : "border-white/10 opacity-55 hover:opacity-85"
+                  }`}
+                  aria-label={`Show ${card.title}`}
+                >
+                  <img
+                    src={card.imageUrl}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -338,7 +436,7 @@ function CardGalaxy() {
       </Sphere>
 
       {cards.map((card, index) => (
-        <FloatingCard key={card.id} card={card} position={cardPositions[index]} />
+        <FloatingCard key={card.id} card={card} index={index} position={cardPositions[index]} />
       ))}
     </>
   );
@@ -357,10 +455,25 @@ export default function StellarCardGallery({
   subtitle = "Drag to look around • Scroll to zoom • Click cards to view details",
   className,
 }: StellarCardGalleryProps) {
-  const [selectedCard, setSelectedCard] = useState<GalleryCard | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const selectedCard =
+    selectedIndex === null ? null : cards[selectedIndex] ?? null;
+
+  const setSelectedCard = (card: GalleryCard | null) => {
+    if (!card) {
+      setSelectedIndex(null);
+      return;
+    }
+
+    const nextIndex = cards.findIndex((currentCard) => currentCard.id === card.id);
+    setSelectedIndex(nextIndex >= 0 ? nextIndex : null);
+  };
 
   return (
-    <CardContext.Provider value={{ selectedCard, setSelectedCard, cards }}>
+    <CardContext.Provider
+      value={{ selectedCard, setSelectedCard, selectedIndex, setSelectedIndex, cards }}
+    >
       <div
         className={`relative w-full overflow-hidden rounded-[1.7rem] bg-black ${className ?? ""}`}
       >
