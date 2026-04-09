@@ -34,7 +34,7 @@ export const SERVICE_FEATURES: ServiceFeature[] = [
     description: "Detailed bridal mehndi crafted for the biggest day of your celebration.",
     popupTitle: "Bridal Mehndi",
     popupText:
-      "Our bridal mehndi service focuses on dense detailing, balanced symmetry, rich stain planning, and elegant storytelling motifs that photograph beautifully for weddings in Jaipur and beyond.",
+      "Our bridal mehndi service focuses on dense detailing, balanced symmetry, rich stain planning, and elegant storytelling motifs that photograph beautifully for weddings in Greater Noida and beyond.",
   },
   {
     id: "engagement",

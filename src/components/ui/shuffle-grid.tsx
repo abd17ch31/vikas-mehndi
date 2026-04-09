@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { businessDetails } from "@/lib/business-details";
 
 const squareData = [
   { id: 1, src: "./src/components/abc/forportfolioprroifle.jpg" },
@@ -96,8 +97,8 @@ export const ShuffleHero = () => {
         </h2>
         <p className="my-4 max-w-xl text-base leading-7 text-amber-50/72 sm:my-6 sm:text-lg sm:leading-8">
           From intricate bridal patterns to Arabic, engagement, and festive
-          designs, Vikas Mehandi Art creates elegant looks that photograph
-          beautifully and feel tailored to each event in Jaipur.
+          designs, {businessDetails.name} creates elegant looks that photograph
+          beautifully and feel tailored to each event in {businessDetails.areaLabel}.
         </p>
         <a
           href="#services"

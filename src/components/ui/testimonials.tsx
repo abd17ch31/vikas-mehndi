@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
+import { businessDetails } from "@/lib/business-details";
 
 export interface Testimonial {
   image: string;
@@ -25,8 +26,8 @@ interface TestimonialsProps {
 export function Testimonials({
   testimonials,
   className,
-  title = "Client love from Jaipur celebrations",
-  description = "Real words from brides, families, and event guests who booked Vikas Mehandi Art for elegant mehndi moments.",
+  title = `Client love from ${businessDetails.areaLabel} celebrations`,
+  description = `Real words from brides, families, and event guests who booked ${businessDetails.name} for elegant mehndi moments.`,
   maxDisplayed = 6,
 }: TestimonialsProps) {
   const [showAll, setShowAll] = useState(false);

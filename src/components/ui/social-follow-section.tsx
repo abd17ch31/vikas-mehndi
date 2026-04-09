@@ -1,12 +1,13 @@
 "use client";
 
 import AnimatedSocialLinks, { type Social } from "@/components/ui/social-links";
+import { businessDetails } from "@/lib/business-details";
 
 const socials: Social[] = [
   {
     name: "Instagram",
     image: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png",
-    href: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    href: businessDetails.instagramUrl,
   },
   {
     name: "Facebook",
@@ -16,12 +17,12 @@ const socials: Social[] = [
   {
     name: "WhatsApp",
     image: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
-    href: "https://wa.me/",
+    href: `https://wa.me/${businessDetails.whatsappNumber}`,
   },
   {
     name: "Google",
     image: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
-    href: "https://www.google.com/maps",
+    href: businessDetails.mapsUrl,
   },
 ];
 

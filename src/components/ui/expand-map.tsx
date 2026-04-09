@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { businessDetails } from "@/lib/business-details";
 
 interface LocationMapProps {
   location?: string;
@@ -12,15 +13,15 @@ interface LocationMapProps {
 }
 
 export function LocationMap({
-  location = "Raja Park, Jaipur, Rajasthan",
-  coordinates = "26.9047° N, 75.8267° E",
+  location = businessDetails.location,
+  coordinates = businessDetails.location,
   className,
 }: LocationMapProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const embedLocation = encodeURIComponent("Shop no. 390, Raja Park, Jaipur, Rajasthan");
+  const embedLocation = encodeURIComponent(businessDetails.location);
   const embedUrl = `https://www.google.com/maps?q=${embedLocation}&z=16&output=embed`;
 
   const mouseX = useMotionValue(0);

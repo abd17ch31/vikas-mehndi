@@ -5,8 +5,9 @@ import { MapPin, Navigation, Phone } from "lucide-react";
 import { LocationMap } from "@/components/ui/expand-map";
 import { FooterTapedDesign } from "@/components/ui/footer-taped-design";
 import { SiteNavbar } from "@/components/ui/site-navbar";
+import { businessDetails } from "@/lib/business-details";
 
-const MAPS_SHORT_URL = "https://goo.gl/maps/NQFsvcKo7fAzNcdz9";
+const MAPS_URL = businessDetails.mapsUrl;
 
 export function LocateUsPage() {
   return (
@@ -20,8 +21,8 @@ export function LocateUsPage() {
               <div className="flex w-full items-center justify-center">
                 <LocationMap
                   className="max-w-full"
-                  location="Shop no. 390, Raja Park, Jaipur, Rajasthan"
-                  coordinates="26.9047° N, 75.8267° E"
+                  location={businessDetails.location}
+                  coordinates={businessDetails.location}
                 />
               </div>
             </div>
@@ -32,13 +33,13 @@ export function LocateUsPage() {
                   Locate Us
                 </span>
                 <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-[#5a2a17] sm:text-5xl">
-                  Visit Vikas Mehandi Art in the heart of Raja Park, Jaipur
+                  Visit {businessDetails.name} in {businessDetails.areaLabel}
                 </h1>
                 <p className="mt-5 max-w-xl text-base leading-8 text-[#7a5842] sm:text-lg">
                   We welcome bridal bookings, festive mehndi appointments, guest
-                  group sessions, and custom design consultations at our Jaipur
-                  location. Reach out before visiting and we will help you plan
-                  the best time for your appointment.
+                  group sessions, and custom design consultations at our{" "}
+                  {businessDetails.areaLabel} location. Reach out before visiting
+                  and we will help you plan the best time for your appointment.
                 </p>
 
                 <div className="mt-8 space-y-5">
@@ -50,7 +51,7 @@ export function LocateUsPage() {
                           Address
                         </p>
                         <p className="mt-2 text-base leading-7 text-[#6d4630]">
-                          Shop no. 390, Raja Park, Jaipur, Rajasthan
+                          {businessDetails.location}
                         </p>
                       </div>
                     </div>
@@ -64,8 +65,8 @@ export function LocateUsPage() {
                           Contact
                         </p>
                         <p className="mt-2 text-base leading-7 text-[#6d4630]">
-                          Call us directly on 9351260318 for bookings, timing
-                          confirmation, and event enquiries.
+                          Call us directly on {businessDetails.phone} for bookings,
+                          timing confirmation, and event enquiries.
                         </p>
                       </div>
                     </div>
@@ -75,14 +76,14 @@ export function LocateUsPage() {
 
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                 <a
-                  href="tel:9351260318"
+                  href={`tel:${businessDetails.phone}`}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-[#2a120d] transition hover:bg-amber-300"
                 >
                   <Phone className="h-4 w-4" />
                   Contact on Call
                 </a>
                 <a
-                  href={MAPS_SHORT_URL}
+                  href={MAPS_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-amber-300/45 bg-white/90 px-6 py-3 text-sm font-semibold text-[#7a4b24] transition hover:bg-[#fff3dd]"

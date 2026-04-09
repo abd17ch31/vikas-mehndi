@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { businessDetails } from "@/lib/business-details";
 
 interface Contact2Props {
   title?: string;
@@ -28,9 +29,9 @@ const SERVICE_OPTIONS = [
 export const Contact2 = ({
   title = "Book Appointment",
   description = "Share your event details and we will continue the conversation on WhatsApp for quick mehndi booking.",
-  phone = "9351260318",
-  whatsappNumber = "919351260318",
-  address = "Shop no. 390, Raja Park, Jaipur, Rajasthan",
+  phone = businessDetails.phone,
+  whatsappNumber = businessDetails.whatsappNumber,
+  address = businessDetails.location,
 }: Contact2Props) => {
   const [form, setForm] = useState({
     name: "",
@@ -44,7 +45,7 @@ export const Contact2 = ({
 
   const whatsappHref = useMemo(() => {
     const message = [
-      "Hello Vikas Mehandi Art, I would like to book an appointment.",
+      `Hello ${businessDetails.name}, I would like to book an appointment.`,
       `Name: ${form.name || "-"}`,
       `Phone: ${form.phone || "-"}`,
       `Service: ${form.service || "-"}`,
@@ -90,7 +91,7 @@ export const Contact2 = ({
                   <MessageCircle className="mt-0.5 h-4 w-4 text-[#b06a1f]" />
                   <span>
                     <span className="font-bold">WhatsApp: </span>
-                    +91 93512 60318
+                    +91 77039 88599
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -147,7 +148,7 @@ export const Contact2 = ({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="venue">Venue / Area</Label>
-                <Input id="venue" placeholder="Raja Park / Jaipur / Event Venue" value={form.venue} onChange={setField("venue")} />
+                <Input id="venue" placeholder="Zeta 1 / Greater Noida / Event Venue" value={form.venue} onChange={setField("venue")} />
               </div>
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="guests">Guest Count</Label>

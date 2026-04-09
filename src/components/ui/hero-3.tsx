@@ -4,6 +4,7 @@ import React from "react";
 import { motion, type Variants } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { businessDetails } from "@/lib/business-details";
 
 interface AnimatedMarqueeHeroProps {
   tagline: string;
@@ -144,7 +145,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
             >
               <img
                 src={src}
-                alt={`Vikas Mehandi Art showcase ${index + 1}`}
+                alt={`${businessDetails.name} showcase ${index + 1}`}
                 className="h-full w-full object-cover"
                 loading="lazy"
               />

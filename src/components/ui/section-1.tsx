@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
+import { businessDetails } from "@/lib/business-details";
 
 const SHOWCASE_IMAGES = [
   "/assets/images/h6.jpeg",
@@ -17,7 +18,7 @@ export function Section1() {
     <section className="relative z-10 min-h-screen overflow-hidden bg-transparent">
       <AnimatedMarqueeHero
         className="bg-transparent"
-        tagline="Bridal Mehndi Artist in Raja Park Jaipur"
+        tagline={`Bridal Mehndi Artist in ${businessDetails.areaLabel}`}
         title={
           <>
             Elegant Mehndi Designs
@@ -25,7 +26,7 @@ export function Section1() {
             for Weddings and Celebrations
           </>
         }
-        description="Vikas Mehandi Art creates bridal, Arabic, traditional, and festive mehndi experiences in Jaipur with graceful detailing, polished presentation, and client-first artistry."
+        description={`${businessDetails.name} creates bridal, Arabic, traditional, and festive mehndi experiences in ${businessDetails.areaLabel} with graceful detailing, polished presentation, and client-first artistry.`}
         images={SHOWCASE_IMAGES}
       />
 
@@ -33,7 +34,7 @@ export function Section1() {
         Book mehndi appointment
       </div>
       <div id="locate-us" className="sr-only">
-        Shop no. 390, Raja Park, Jaipur, Rajasthan
+        {businessDetails.location}
       </div>
     </section>
   );

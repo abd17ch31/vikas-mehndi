@@ -3,6 +3,7 @@
 import { Contact2 } from "@/components/ui/contact-2";
 import { FooterTapedDesign } from "@/components/ui/footer-taped-design";
 import { SiteNavbar } from "@/components/ui/site-navbar";
+import { businessDetails } from "@/lib/business-details";
 
 export function BookAppointmentPage() {
   return (
@@ -20,7 +21,7 @@ export function BookAppointmentPage() {
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[#7a5842] sm:text-lg sm:leading-8">
               Fill in your event details and we will open WhatsApp with a ready
-              message to Vikas Mehandi Art so your bridal, engagement, festival,
+              message to {businessDetails.name} so your bridal, engagement, festival,
               guest, portrait, or baby shower booking can be confirmed quickly.
             </p>
           </div>

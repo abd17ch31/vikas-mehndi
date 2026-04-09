@@ -1,6 +1,8 @@
 import { Facebook, Instagram, MapPin, Phone, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { businessDetails } from "@/lib/business-details";
+
 const tape = (
   <svg xmlns="http://www.w3.org/2000/svg" width="95" height="80" viewBox="0 0 95 80" fill="none">
     <path d="M1 45L70.282 5L88.282 36.1769L19 76.1769L1 45Z" fill="#222222" />
@@ -27,11 +29,12 @@ export function FooterTapedDesign() {
               to="/"
               className="flex items-center justify-start gap-2 text-2xl font-extrabold text-[#5a2a17]"
             >
-              Vikas Mehandi Art
+              {businessDetails.name}
             </Link>
             <p className="w-full text-base font-medium text-[#7a5842] md:w-4/5">
-              Bridal, engagement, festive, and custom mehndi artistry crafted in
-              Raja Park, Jaipur with elegant detail and celebration-ready designs.
+              Bridal, engagement, festive, and custom mehndi artistry crafted in{" "}
+              {businessDetails.location} with elegant detail and celebration-ready
+              designs.
             </p>
           </div>
 
@@ -67,18 +70,18 @@ export function FooterTapedDesign() {
                 Contact
               </h4>
               <div className="flex flex-col gap-3 text-sm text-[#7a5842]">
-                <a href="tel:9351260318" className="inline-flex items-center gap-2 font-medium">
+                <a href={`tel:${businessDetails.phone}`} className="inline-flex items-center gap-2 font-medium">
                   <Phone className="h-4 w-4" />
-                  9351260318
+                  {businessDetails.phone}
                 </a>
                 <a
-                  href="https://maps.google.com/?q=Shop+no.+390,+Raja+Park,+Jaipur,+Rajasthan"
+                  href={businessDetails.mapsUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-start gap-2 font-medium"
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                  Shop no. 390, Raja Park, Jaipur, Rajasthan
+                  {businessDetails.location}
                 </a>
               </div>
             </div>
@@ -89,7 +92,7 @@ export function FooterTapedDesign() {
       <div className="my-4 flex flex-col items-start justify-between gap-4 px-4 text-sm text-[#7a5842] md:flex-row md:items-center md:px-8">
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-8">
           <p className="whitespace-nowrap">
-            ©{currentYear} Vikas Mehandi Art. All rights reserved.
+            ©{currentYear} {businessDetails.name}. All rights reserved.
           </p>
           <div className="flex flex-row gap-4">
             <Link to="/">Home</Link>
@@ -102,7 +105,7 @@ export function FooterTapedDesign() {
 
         <div className="flex items-center gap-4">
           <a
-            href="https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3"
+            href={businessDetails.instagramUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
             aria-label="Instagram"

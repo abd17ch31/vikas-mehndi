@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 import { FooterTapedDesign } from "@/components/ui/footer-taped-design";
 import { SiteNavbar } from "@/components/ui/site-navbar";
+import { businessDetails } from "@/lib/business-details";
 
 const detailTabs = [
   {
@@ -41,7 +42,7 @@ const detailTabs = [
     icon: TimerReset,
     title: "A smooth booking experience from consultation to final stain care",
     description:
-      "Clients choose Vikas Mehandi Art for patient communication, dependable event timing, and practical aftercare guidance that helps the color develop beautifully.",
+      `Clients choose ${businessDetails.name} for patient communication, dependable event timing, and practical aftercare guidance that helps the color develop beautifully.`,
     points: [
       "Clear discussion before bridal and event bookings",
       "Punctual support for special-day schedules",
@@ -65,12 +66,12 @@ const detailTabs = [
 
 const highlights = [
   {
-    value: "9351260318",
+    value: businessDetails.phone,
     label: "Call for bookings",
   },
   {
-    value: "Raja Park",
-    label: "Prime Jaipur location",
+    value: businessDetails.areaLabel,
+    label: "Prime local service area",
   },
   {
     value: "Bridal to Guest",
@@ -94,21 +95,21 @@ export function WhyChooseUsPage() {
                     Why Choose Us
                   </span>
                   <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-[#5a2a17] sm:text-5xl lg:text-6xl">
-                    Why choose Vikas Mehandi Art for your special occasions
+                    Why choose {businessDetails.name} for your special occasions
                   </h1>
                   <p className="mt-4 max-w-2xl text-base leading-7 text-[#7a5842] sm:text-lg sm:leading-8">
                     We blend elegant mehndi artistry with comfort, hygiene, and a
                     dependable booking experience for brides, families, and event
-                    guests across Jaipur.
+                    guests across {businessDetails.areaLabel}.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href="tel:9351260318"
+                    href={`tel:${businessDetails.phone}`}
                     className="inline-flex items-center justify-center rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-[#2a120d] transition hover:bg-amber-300"
                   >
-                    Call 9351260318
+                    Call {businessDetails.phone}
                   </a>
                   <Link
                     to="/"
@@ -236,18 +237,18 @@ export function WhyChooseUsPage() {
               </p>
               <div className="mt-6 space-y-5">
                 <a
-                  href="tel:9351260318"
+                  href={`tel:${businessDetails.phone}`}
                   className="flex items-start gap-4 rounded-[1.4rem] border border-amber-200/70 bg-white/75 p-4 transition hover:bg-white"
                 >
                   <Phone className="mt-1 h-5 w-5 text-[#9a5a1a]" />
                   <div>
                     <p className="text-sm text-[#9a5a1a]">Call Us</p>
-                    <p className="text-lg font-semibold text-[#5a2a17]">9351260318</p>
+                    <p className="text-lg font-semibold text-[#5a2a17]">{businessDetails.phone}</p>
                   </div>
                 </a>
 
                 <a
-                  href="https://maps.google.com/?q=Shop+no.+390,+Raja+Park,+Jaipur,+Rajasthan"
+                  href={businessDetails.mapsUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-start gap-4 rounded-[1.4rem] border border-amber-200/70 bg-white/75 p-4 transition hover:bg-white"
@@ -256,7 +257,7 @@ export function WhyChooseUsPage() {
                   <div>
                     <p className="text-sm text-[#9a5a1a]">Visit Us</p>
                     <p className="text-lg font-semibold text-[#5a2a17]">
-                      Shop no. 390, Raja Park, Jaipur, Rajasthan
+                      {businessDetails.location}
                     </p>
                   </div>
                 </a>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Testimonials, type Testimonial } from "@/components/ui/testimonials";
+import { businessDetails } from "@/lib/business-details";
 
 const indianTestimonials: Testimonial[] = [
   {
@@ -10,7 +11,7 @@ const indianTestimonials: Testimonial[] = [
       "My bridal mehndi came out exactly the way I imagined. The detailing was so neat, and the stain turned out beautifully for every wedding function.",
     name: "Aarohi Sharma",
     username: "@aarohi.jaipur",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -19,7 +20,7 @@ const indianTestimonials: Testimonial[] = [
       "We booked for an engagement event and the whole experience felt calm, professional, and so elegant. Everyone kept asking who did the mehndi.",
     name: "Riya Mehta",
     username: "@riya.mehta",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -28,7 +29,7 @@ const indianTestimonials: Testimonial[] = [
       "The guest mehndi service was smooth and well managed. Designs were quick, stylish, and matched the festive mood perfectly.",
     name: "Preeti Arora",
     username: "@preeti.arora",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -37,7 +38,7 @@ const indianTestimonials: Testimonial[] = [
       "What stood out for us was the balance of speed and detail. The portrait mehndi concept looked premium and very special in our photos.",
     name: "Ishaani Kapoor",
     username: "@ishaani.kapoor",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -46,7 +47,7 @@ const indianTestimonials: Testimonial[] = [
       "I booked for Karwa Chauth and loved how graceful the designs felt. The finishing was clean, and the aftercare guidance really helped.",
     name: "Nandini Joshi",
     username: "@nandini.joshi",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -55,7 +56,7 @@ const indianTestimonials: Testimonial[] = [
       "For our family baby shower, the designs felt festive without being overdone. It looked polished and suited every age group.",
     name: "Preeti Bansal",
     username: "@preeti.bansal",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -64,7 +65,7 @@ const indianTestimonials: Testimonial[] = [
       "The bridal booking was one of the easiest parts of our wedding planning. The artist understood references quickly and delivered beautifully.",
     name: "Mehak Arora",
     username: "@mehak.arora",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
   {
     image:
@@ -73,7 +74,7 @@ const indianTestimonials: Testimonial[] = [
       "I appreciated how the mehndi design was tailored to the event instead of feeling generic. It felt thoughtful and photo-ready.",
     name: "Devika Malhotra",
     username: "@devika.malhotra",
-    social: "https://www.instagram.com/vikashmehandiart01?igsh=N2dkMzYwZjJjZjJ3",
+    social: businessDetails.instagramUrl,
   },
 ];
 
@@ -88,7 +89,7 @@ export function TestimonialsSection() {
           <Testimonials
             testimonials={indianTestimonials}
             title="Reviews from brides, families, and celebration hosts"
-            description="Responsive testimonials built for every screen size, featuring warm feedback from Indian clients who booked Vikas Mehandi Art for weddings, engagements, festive events, and family occasions."
+            description={`Responsive testimonials built for every screen size, featuring warm feedback from Indian clients who booked ${businessDetails.name} for weddings, engagements, festive events, and family occasions.`}
             maxDisplayed={6}
           />
         </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { businessDetails } from "@/lib/business-details";
 
 const NAV_LINKS = [
   { label: "Home", type: "route", href: "/" },
@@ -33,15 +34,15 @@ export function SiteNavbar({ absolute = false }: SiteNavbarProps) {
             <Link to="/" className="flex min-w-0 items-center gap-3">
               <img
                 src="/assets/hero.png"
-                alt="Vikas Mehandi Art logo"
+                alt={`${businessDetails.name} logo`}
                 className="h-11 w-11 rounded-full border border-amber-300/35 object-cover shadow-[0_10px_30px_rgba(182,117,47,0.16)]"
               />
               <div className="min-w-0 text-left">
                 <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-[#b06a1f]/80">
-                  Jaipur Mehndi Studio
+                  {businessDetails.areaLabel} Mehndi Studio
                 </p>
                 <p className="truncate text-base font-semibold text-[#5a2a17] sm:text-lg">
-                  Vikas Mehandi Art
+                  {businessDetails.name}
                 </p>
               </div>
             </Link>
