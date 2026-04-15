@@ -7,6 +7,42 @@ import { Link } from "react-router-dom";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 
+const artistImages = [
+  {
+    src: "/assets/artists/nitin.jpeg",
+    alt: "Nitin Nayak, owner and lead mehndi artist",
+    label: "Owner Artist",
+    figureClassName:
+      "col-span-2 row-span-2 shadow-[0_26px_70px_rgba(176,106,31,0.24)]",
+    imageClassName: "scale-105 object-[center_28%]",
+    animationNum: 2,
+  },
+  {
+    src: "/assets/artists/artist3.png",
+    alt: "Mehndi artist portrait",
+    label: "Artist",
+    figureClassName: "col-span-1 row-span-1",
+    imageClassName: "rotate-2 object-[center_18%]",
+    animationNum: 3,
+  },
+  {
+    src: "/assets/artists/monu%20.jpeg",
+    alt: "Mehndi artist portrait",
+    label: "Artist",
+    figureClassName: "col-span-1 row-span-1",
+    imageClassName: "-rotate-2 object-[center_20%]",
+    animationNum: 4,
+  },
+  {
+    src: "/assets/artists/artist2.png",
+    alt: "Mehndi artist portrait",
+    label: "Artist",
+    figureClassName: "col-span-2 row-span-1 sm:col-span-1",
+    imageClassName: "rotate-1 object-[center_18%]",
+    animationNum: 5,
+  },
+];
+
 export default function AboutSection1() {
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -131,67 +167,30 @@ export default function AboutSection1() {
         </TimelineContent>
       </div>
 
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 pt-16 sm:grid-cols-4 lg:h-[26rem] md:h-[22rem] sm:h-[18rem] h-[18rem]">
-        <TimelineContent
-          as="figure"
-          animationNum={2}
-          timelineRef={heroRef}
-          customVariants={revealVariants}
-          className="h-full w-full overflow-hidden rounded-[2rem] shadow-[0_20px_50px_rgba(176,106,31,0.14)]"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=687&auto=format&fit=crop"
-            alt="Artist portrait"
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full rotate-2 object-cover"
-          />
-        </TimelineContent>
-        <TimelineContent
-          as="figure"
-          animationNum={3}
-          timelineRef={heroRef}
-          customVariants={revealVariants2}
-          className="h-full w-full overflow-hidden rounded-[2rem] shadow-[0_20px_50px_rgba(176,106,31,0.14)]"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1609179242555-1d7b4b0a568c?q=80&w=687&auto=format&fit=crop"
-            alt="Artist portrait"
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full -rotate-2 object-cover"
-          />
-        </TimelineContent>
-        <TimelineContent
-          as="figure"
-          animationNum={4}
-          timelineRef={heroRef}
-          customVariants={revealVariants2}
-          className="h-full w-full overflow-hidden rounded-[2rem] shadow-[0_20px_50px_rgba(176,106,31,0.14)]"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1611695434398-4f4b330623e6?q=80&w=735&auto=format&fit=crop"
-            alt="Artist portrait"
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full -rotate-2 object-cover"
-          />
-        </TimelineContent>
-        <TimelineContent
-          as="figure"
-          animationNum={5}
-          timelineRef={heroRef}
-          customVariants={revealVariants2}
-          className="h-full w-full overflow-hidden rounded-[2rem] shadow-[0_20px_50px_rgba(176,106,31,0.14)]"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1567934872913-aacea74458b7?q=80&w=687&auto=format&fit=crop"
-            alt="Artist portrait"
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full rotate-2 object-cover"
-          />
-        </TimelineContent>
+      <div className="mx-auto grid max-w-6xl auto-rows-[9.5rem] grid-cols-2 gap-4 pt-16 sm:auto-rows-[11rem] sm:grid-cols-4 md:auto-rows-[13rem] lg:auto-rows-[15rem]">
+        {artistImages.map((artist, index) => (
+          <TimelineContent
+            key={artist.src}
+            as="figure"
+            animationNum={artist.animationNum}
+            timelineRef={heroRef}
+            customVariants={index === 0 ? revealVariants : revealVariants2}
+            className={`group relative h-full w-full overflow-hidden rounded-[1.5rem] border border-amber-200/45 bg-white/40 shadow-[0_20px_50px_rgba(176,106,31,0.14)] ${artist.figureClassName}`}
+          >
+            <img
+              src={artist.src}
+              alt={artist.alt}
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
+              className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${artist.imageClassName}`}
+            />
+            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2d160e]/80 to-transparent px-4 pb-4 pt-16">
+              <span className="inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase text-[#9a5a1b] shadow-sm">
+                {artist.label}
+              </span>
+            </figcaption>
+          </TimelineContent>
+        ))}
       </div>
     </section>
   );
