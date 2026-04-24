@@ -1,7 +1,7 @@
 import { Facebook, Instagram, MapPin, Phone, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { businessDetails } from "@/lib/business-details";
+import { useSiteContent } from "@/components/providers/site-content-provider";
 
 const tape = (
   <svg xmlns="http://www.w3.org/2000/svg" width="95" height="80" viewBox="0 0 95 80" fill="none">
@@ -12,6 +12,8 @@ const tape = (
 
 export function FooterTapedDesign() {
   const currentYear = new Date().getFullYear();
+  const { siteContent } = useSiteContent();
+  const { business, footer, navigation } = siteContent;
 
   return (
     <footer className="mx-auto my-8 max-w-5xl px-4 text-[#5a2a17]">
@@ -29,59 +31,63 @@ export function FooterTapedDesign() {
               to="/"
               className="flex items-center justify-start gap-2 text-2xl font-extrabold text-[#5a2a17]"
             >
-              {businessDetails.name}
+              {business.name}
             </Link>
             <p className="w-full text-base font-medium text-[#7a5842] md:w-4/5">
-              Bridal, engagement, festive, and custom mehndi artistry crafted in{" "}
-              {businessDetails.location} with elegant detail and celebration-ready
-              designs.
+              {footer.description}
             </p>
           </div>
 
           <div className="flex flex-col items-start gap-6 md:mx-4 md:flex-row md:gap-16">
             <div className="flex flex-col gap-3">
               <h4 className="text-md font-semibold uppercase text-[#9a5a1a]">
-                Explore
+                {footer.exploreLabel}
               </h4>
               <div className="flex flex-wrap items-start gap-3 text-sm md:flex-col">
-                <Link className="font-medium text-[#7a5842]" to="/why-choose-us">About</Link>
-                <Link className="font-medium text-[#7a5842]" to="/services">Services</Link>
-                <Link className="font-medium text-[#7a5842]" to="/our-work">Gallery</Link>
-                <Link className="font-medium text-[#7a5842]" to="/locate-us">Locate Us</Link>
-                <a className="font-medium text-[#7a5842]" href="/#testimonials">Testimonials</a>
-                <a className="font-medium text-[#7a5842]" href="/#follow-us">Follow Us</a>
+                {navigation.links.map((link) => (
+                  <Link key={link.href} className="font-medium text-[#7a5842]" to={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
+                <a className="font-medium text-[#7a5842]" href="/#testimonials">
+                  Testimonials
+                </a>
+                <a className="font-medium text-[#7a5842]" href="/#follow-us">
+                  Follow Us
+                </a>
               </div>
             </div>
 
             <div className="flex flex-col gap-3">
               <h4 className="text-md font-semibold uppercase text-[#9a5a1a]">
-                Services
+                {footer.servicesLabel}
               </h4>
               <div className="flex flex-wrap items-start gap-3 text-sm md:flex-col">
-                <span className="font-medium text-[#7a5842]">Bridal Mehndi</span>
-                <span className="font-medium text-[#7a5842]">Engagement Mehndi</span>
-                <span className="font-medium text-[#7a5842]">Festival Mehndi</span>
-                <span className="font-medium text-[#7a5842]">Guest Mehndi</span>
+                {footer.serviceNames.map((service) => (
+                  <span key={service} className="font-medium text-[#7a5842]">
+                    {service}
+                  </span>
+                ))}
               </div>
             </div>
 
             <div className="flex flex-col gap-3">
               <h4 className="text-md font-semibold uppercase text-[#9a5a1a]">
-                Contact
+                {footer.contactLabel}
               </h4>
               <div className="flex flex-col gap-3 text-sm text-[#7a5842]">
-                <a href={`tel:${businessDetails.phone}`} className="inline-flex items-center gap-2 font-medium">
+                <a href={`tel:${business.phone}`} className="inline-flex items-center gap-2 font-medium">
                   <Phone className="h-4 w-4" />
-                  {businessDetails.phone}
+                  {business.phone}
                 </a>
                 <a
-                  href={businessDetails.mapsUrl}
+                  href={business.mapsUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-start gap-2 font-medium"
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                  {businessDetails.location}
+                  {business.location}
                 </a>
               </div>
             </div>
@@ -92,20 +98,20 @@ export function FooterTapedDesign() {
       <div className="my-4 flex flex-col items-start justify-between gap-4 px-4 text-sm text-[#7a5842] md:flex-row md:items-center md:px-8">
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-8">
           <p className="whitespace-nowrap">
-            ©{currentYear} {businessDetails.name}. All rights reserved.
+            ©{currentYear} {business.name}. {footer.copyrightText}
           </p>
           <div className="flex flex-row gap-4">
-            <Link to="/">Home</Link>
-            <Link to="/why-choose-us">About</Link>
-            <Link to="/services">Services</Link>
-            <Link to="/our-work">Gallery</Link>
-            <Link to="/locate-us">Locate Us</Link>
+            {navigation.links.map((link) => (
+              <Link key={link.href} to={link.href}>
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
 
         <div className="flex items-center gap-4">
           <a
-            href={businessDetails.instagramUrl}
+            href={business.instagramUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
             aria-label="Instagram"
@@ -114,7 +120,7 @@ export function FooterTapedDesign() {
             <Instagram className="h-5 w-5" />
           </a>
           <a
-            href="https://www.facebook.com/"
+            href={business.facebookUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
             aria-label="Facebook"
@@ -123,7 +129,7 @@ export function FooterTapedDesign() {
             <Facebook className="h-5 w-5" />
           </a>
           <a
-            href="https://x.com/"
+            href={business.xUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
             aria-label="X"

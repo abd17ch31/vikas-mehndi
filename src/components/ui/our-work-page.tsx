@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, X } from "lucide-react";
 
+import { useSiteContent } from "@/components/providers/site-content-provider";
 import StellarCardGallery from "@/components/ui/3d-image-gallery";
 import { FooterTapedDesign } from "@/components/ui/footer-taped-design";
 import { SiteNavbar } from "@/components/ui/site-navbar";
@@ -16,113 +17,21 @@ type WorkCard = {
   gallery: string[];
 };
 
-const workCards: WorkCard[] = [
-  {
-    id: "bridal-royal",
-    title: "Royal Bridal",
-    subtitle: "Intricate full bridal storytelling",
-    cover: "/assets/Gallery/Bridal/cover.jpeg",
-    gallery: [
-      "/assets/Gallery/Bridal/b1.jpeg",
-      "/assets/Gallery/Bridal/b2.jpeg",
-      "/assets/Gallery/Bridal/b3.jpeg",
-      "/assets/Gallery/Bridal/b4.jpeg",
-      "/assets/Gallery/Bridal/b5.jpeg",
-      "/assets/Gallery/Bridal/b6.jpeg",
-      "/assets/Gallery/Bridal/b7.jpeg",
-      "/assets/Gallery/Bridal/b8.jpeg",
-      "/assets/Gallery/Bridal/b9.jpeg",
-    ],
-  },
-  {
-    id: "engagement-style",
-    title: "Engagement Style",
-    subtitle: "Elegant and camera-ready details",
-    cover: "/assets/Gallery/Engagement/cover.png",
-    gallery: [
-      "/assets/Gallery/Engagement/e1.png",
-      "/assets/Gallery/Engagement/e2.png",
-      "/assets/Gallery/Engagement/e3.png",
-      "/assets/Gallery/Engagement/e4.png",
-      "/assets/Gallery/Engagement/e5.png",
-      "/assets/Gallery/Engagement/e6.png",
-      "/assets/Gallery/Engagement/e7.png",
-      "/assets/Gallery/Engagement/e8.png",
-      "/assets/Gallery/Engagement/e9.png",
-    ],
-  },
-  {
-    id: "festival-flair",
-    title: "Stylish Flair",
-    subtitle: "Fast, stylish festive patterns",
-    cover: "/assets/Gallery/Stylish/cover.jpeg",
-    gallery: [
-      "/assets/Gallery/Stylish/f1.jpeg",
-      "/assets/Gallery/Stylish/f2.jpeg",
-      "/assets/Gallery/Stylish/f3.jpeg",
-      "/assets/Gallery/Stylish/f4.jpeg",
-      "/assets/Gallery/Stylish/f5.jpeg",
-      "/assets/Gallery/Stylish/f6.jpeg",
-      "/assets/Gallery/Stylish/f7.jpeg",
-      "/assets/Gallery/Stylish/f8.jpeg",
-      "/assets/Gallery/Stylish/f9.jpeg",
-    ],
-  },
-  {
-    id: "portrait-concepts",
-    title: "Portrait Concepts",
-    subtitle: "Signature customized artistry",
-    cover: "/assets/Gallery/Portrait/cover.jpeg",
-    gallery: [
-      "/assets/Gallery/Portrait/p1.jpeg",
-      "/assets/Gallery/Portrait/p2.jpeg",
-      "/assets/Gallery/Portrait/p3.jpeg",
-      "/assets/Gallery/Portrait/p4.jpeg",
-      "/assets/Gallery/Portrait/p5.jpeg",
-      "/assets/Gallery/Portrait/p6.jpeg",
-      "/assets/Gallery/Portrait/p7.jpeg",
-      "/assets/Gallery/Portrait/p8.jpeg",
-      "/assets/Gallery/Portrait/p9.jpeg",
-    ],
-  },
-  {
-    id: "guest-group",
-    title: "Guest Group",
-    subtitle: "Coordinated event bookings",
-    cover: "/assets/Gallery/Guest/cover.jpeg",
-    gallery: [
-      "/assets/Gallery/Guest/g1.jpeg",
-      "/assets/Gallery/Guest/g2.jpeg",
-      "/assets/Gallery/Guest/g3.jpeg",
-      "/assets/Gallery/Guest/g4.jpeg",
-      "/assets/Gallery/Guest/g5.jpeg",
-      "/assets/Gallery/Guest/g6.jpeg",
-      "/assets/Gallery/Guest/g7.jpeg",
-      "/assets/Gallery/Guest/g8.jpeg",
-      "/assets/Gallery/Guest/g9.jpeg",
-    ],
-  },
-  {
-    id: "baby-shower",
-    title: "Baby Shower",
-    subtitle: "Soft celebratory motifs",
-    cover: "/assets/Gallery/Baby/cover.jpeg",
-    gallery: [
-      "/assets/Gallery/Baby/s1.jpeg",
-      "/assets/Gallery/Baby/s2.jpeg",
-      "/assets/Gallery/Baby/s3.jpeg",
-      "/assets/Gallery/Baby/s4.jpeg",
-      "/assets/Gallery/Baby/s5.jpeg",
-      "/assets/Gallery/Baby/s6.jpeg",
-      "/assets/Gallery/Baby/s7.jpeg",
-      "/assets/Gallery/Baby/s8.jpeg",
-      "/assets/Gallery/Baby/s9.jpeg",
-    ],
-  },
-];
-
 export function OurWorkPage() {
   const [activeCard, setActiveCard] = useState<WorkCard | null>(null);
+  const { siteContent } = useSiteContent();
+
+  const workCards = useMemo<WorkCard[]>(
+    () =>
+      siteContent.services.map((service) => ({
+        id: service.id,
+        title: service.title,
+        subtitle: service.shortDescription,
+        cover: service.galleryCover,
+        gallery: service.galleryImages,
+      })),
+    [siteContent.services]
+  );
 
   return (
     <div className="relative min-h-screen">
@@ -132,21 +41,19 @@ export function OurWorkPage() {
         <section className="mx-auto max-w-7xl rounded-[2rem] border border-amber-300/35 bg-white/58 p-5 shadow-[0_24px_70px_rgba(176,106,31,0.10)] backdrop-blur-md sm:p-8">
           <div className="max-w-3xl">
             <span className="inline-flex rounded-full border border-amber-300/50 bg-[#fff6df] px-4 py-2 text-xs font-medium uppercase tracking-[0.25em] text-[#9a5a1a] shadow-sm">
-              Our Work
+              {siteContent.galleryPage.badge}
             </span>
             <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[#5a2a17] sm:text-5xl">
-              Explore featured mehndi styles through an interactive design gallery
+              {siteContent.galleryPage.title}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[#7a5842] sm:text-lg sm:leading-8">
-              Click any spotlight card to open a larger popup gallery with an
-              immersive 3D image experience. This page highlights bridal,
-              engagement, festive, portrait, guest, and baby shower design moods.
+              {siteContent.galleryPage.description}
             </p>
           </div>
         </section>
 
         <section className="mx-auto mt-8 max-w-7xl">
-          <div className="grid gap-y-16 gap-x-6 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-x-6 gap-y-16 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
             {workCards.map((card) => (
               <button
                 key={card.id}
@@ -203,7 +110,7 @@ export function OurWorkPage() {
 
                 <div className="mb-6 pr-12">
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#b06a1f]">
-                    Popup Gallery
+                    {siteContent.galleryPage.popupBadge}
                   </p>
                   <h2 className="mt-2 text-3xl font-semibold text-[#5a2a17]">
                     {activeCard.title}
@@ -215,7 +122,7 @@ export function OurWorkPage() {
                   <StellarCardGallery
                     className="h-[65vh] min-h-[420px] w-full"
                     title={`${activeCard.title} Gallery`}
-                    subtitle="Drag to look around • Scroll to zoom • Click cards to view details"
+                    subtitle={siteContent.galleryPage.popupSubtitle}
                     cards={activeCard.gallery.map((image, index) => ({
                       id: `${activeCard.id}-${index + 1}`,
                       imageUrl: image,

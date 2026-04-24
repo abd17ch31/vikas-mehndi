@@ -1,97 +1,22 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Brush,
-  Camera,
-  Flower2,
-  Gem,
-  HeartHandshake,
-  PartyPopper,
-  X,
-} from "lucide-react";
+import { Gem, X } from "lucide-react";
 
+import type { ServiceContent } from "@/lib/cms/types";
+import { getLucideIcon } from "@/lib/cms/icon-map";
 import { cn } from "@/lib/utils";
 
 export type ServiceFeature = {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconName: string;
   image: string;
   description: string;
   popupTitle: string;
   popupText: string;
 };
-
-export const SERVICE_FEATURES: ServiceFeature[] = [
-  {
-    id: "bridal",
-    label: "Bridal",
-    icon: Gem,
-    image:
-      "/assets/Services/bridal.png",
-    description: "Detailed bridal mehndi crafted for the biggest day of your celebration.",
-    popupTitle: "Bridal Mehndi",
-    popupText:
-      "Our bridal mehndi service focuses on dense detailing, balanced symmetry, rich stain planning, and elegant storytelling motifs that photograph beautifully for weddings in Greater Noida and beyond.",
-  },
-  {
-    id: "engagement",
-    label: "Engagement",
-    icon: HeartHandshake,
-    image:
-      "/assets/Services/engagement.png",
-    description: "Graceful engagement designs with a polished, celebration-ready finish.",
-    popupTitle: "Engagement Mehndi",
-    popupText:
-      "This service is ideal for ring ceremonies and pre-wedding events, with refined patterns that feel elegant, modern, and comfortable to wear through long celebrations.",
-  },
-  {
-    id: "portrait",
-    label: "Portrait",
-    icon: Camera,
-    image:
-      "/assets/Services/portrait.jpeg",
-    description: "Custom portrait mehndi concepts with signature artistic detailing.",
-    popupTitle: "Portrait Mehndi",
-    popupText:
-      "Portrait mehndi is designed for clients who want highly personalized artwork, including custom faces, initials, meaningful symbols, and story-led compositions.",
-  },
-  {
-    id: "festival",
-    label: "Festival",
-    icon: PartyPopper,
-    image:
-      "/assets/Services/festival.png",
-    description: "Quick yet beautiful festive mehndi for Teej, Karwa Chauth, Diwali, and more.",
-    popupTitle: "Festival Mehndi",
-    popupText:
-      "Festival mehndi is perfect for seasonal celebrations, offering stylish floral and traditional patterns with quick application and a bright, festive presence.",
-  },
-  {
-    id: "baby-shower",
-    label: "Baby Shower",
-    icon: Flower2,
-    image:
-      "/assets/Services/baby.jpeg",
-    description: "Soft and celebratory motifs created for baby shower events and family gatherings.",
-    popupTitle: "Baby Shower Mehndi",
-    popupText:
-      "Our baby shower mehndi service uses soft motifs, gentle compositions, and joyful detailing that suits intimate family moments and celebration photos.",
-  },
-  {
-    id: "guest",
-    label: "Guest",
-    icon: Brush,
-    image:
-      "/assets/Services/Guest.jpeg",
-    description: "Stylish guest mehndi arranged for families, friends, and group bookings.",
-    popupTitle: "Guest Mehndi",
-    popupText:
-      "Guest mehndi is planned for smooth event flow, allowing family members and guests to enjoy coordinated, elegant designs without long waiting or rushed results.",
-  },
-];
 
 const AUTO_PLAY_INTERVAL = 3200;
 const ITEM_HEIGHT = 65;
@@ -101,32 +26,49 @@ const wrap = (min: number, max: number, value: number) => {
   return ((((value - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
-export function FeatureCarousel() {
+export const buildServiceFeatures = (
+  services: ServiceContent[]
+): ServiceFeature[] =>
+  services.map((service) => ({
+    id: service.id,
+    label: service.title,
+    iconName: service.icon,
+    image: service.carouselImage,
+    description: service.shortDescription,
+    popupTitle: service.popupTitle,
+    popupText: service.popupText,
+  }));
+
+interface FeatureCarouselProps {
+  features: ServiceFeature[];
+}
+
+export function FeatureCarousel({ features }: FeatureCarouselProps) {
   const [step, setStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [activePopup, setActivePopup] = useState<ServiceFeature | null>(null);
 
   const currentIndex =
-    ((step % SERVICE_FEATURES.length) + SERVICE_FEATURES.length) % SERVICE_FEATURES.length;
+    ((step % features.length) + features.length) % features.length;
 
   const nextStep = useCallback(() => {
     setStep((prev) => prev + 1);
   }, []);
 
   const handleChipClick = (index: number) => {
-    const diff = (index - currentIndex + SERVICE_FEATURES.length) % SERVICE_FEATURES.length;
+    const diff = (index - currentIndex + features.length) % features.length;
     if (diff > 0) setStep((value) => value + diff);
   };
 
   useEffect(() => {
-    if (isPaused || activePopup) return undefined;
+    if (isPaused || activePopup || features.length === 0) return undefined;
     const interval = window.setInterval(nextStep, AUTO_PLAY_INTERVAL);
     return () => window.clearInterval(interval);
-  }, [nextStep, isPaused, activePopup]);
+  }, [activePopup, features.length, isPaused, nextStep]);
 
   const getCardStatus = (index: number) => {
     const diff = index - currentIndex;
-    const len = SERVICE_FEATURES.length;
+    const len = features.length;
 
     let normalizedDiff = diff;
     if (diff > len / 2) normalizedDiff -= len;
@@ -146,15 +88,15 @@ export function FeatureCarousel() {
             <div className="absolute inset-x-0 top-0 z-40 h-12 bg-gradient-to-b from-[#d88936] via-[#d88936]/80 to-transparent md:h-20 lg:h-16" />
             <div className="absolute inset-x-0 bottom-0 z-40 h-12 bg-gradient-to-t from-[#d88936] via-[#d88936]/80 to-transparent md:h-20 lg:h-16" />
             <div className="relative z-20 flex h-full w-full items-center justify-center lg:justify-start">
-              {SERVICE_FEATURES.map((feature, index) => {
+              {features.map((feature, index) => {
                 const isActive = index === currentIndex;
                 const distance = index - currentIndex;
                 const wrappedDistance = wrap(
-                  -(SERVICE_FEATURES.length / 2),
-                  SERVICE_FEATURES.length / 2,
+                  -(features.length / 2),
+                  features.length / 2,
                   distance
                 );
-                const Icon = feature.icon;
+                const Icon = getLucideIcon(feature.iconName, Gem);
 
                 return (
                   <motion.div
@@ -200,12 +142,12 @@ export function FeatureCarousel() {
 
           <div className="relative flex min-h-[500px] flex-1 items-center justify-center overflow-hidden border-t border-amber-200/30 bg-[#fff3d9]/50 px-6 py-16 md:min-h-[600px] md:px-12 md:py-24 lg:h-full lg:border-l lg:border-t-0 lg:px-10 lg:py-16">
             <div className="relative flex aspect-[4/5] w-full max-w-[420px] items-center justify-center">
-              {SERVICE_FEATURES.map((feature, index) => {
+              {features.map((feature, index) => {
                 const status = getCardStatus(index);
                 const isActive = status === "active";
                 const isPrev = status === "prev";
                 const isNext = status === "next";
-                const Icon = feature.icon;
+                const Icon = getLucideIcon(feature.iconName, Gem);
 
                 return (
                   <motion.button

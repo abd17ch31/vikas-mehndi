@@ -1,0 +1,104 @@
+export const siteContentQuery = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
+  business{
+    name,
+    owner,
+    location,
+    phone,
+    whatsappNumber,
+    instagramUrl,
+    instagramHandle,
+    facebookUrl,
+    xUrl,
+    mapsUrl,
+    areaLabel,
+    regionLabel,
+    "logoUrl": logo.asset->url
+  },
+  navigation{
+    links[]{
+      label,
+      href
+    },
+    ctaLabel,
+    ctaHref
+  },
+  hero{
+    tagline,
+    title,
+    description,
+    ctaText,
+    "showcaseImages": showcaseImages[].asset->url
+  },
+  homeServicesSection,
+  testimonialsSection,
+  aboutSection{
+    badge,
+    title,
+    description,
+    ctaLabel,
+    ctaHref,
+    artistImages[]{
+      "src": image.asset->url,
+      alt,
+      label
+    }
+  },
+  socialSection{
+    badge,
+    title,
+    description,
+    links[]{
+      name,
+      image,
+      href
+    }
+  },
+  servicesPage,
+  galleryPage,
+  whyChoosePage{
+    badge,
+    title,
+    description,
+    callLabel,
+    backLabel,
+    highlights[]{
+      value,
+      label
+    },
+    interactiveBadge,
+    standardsBadge,
+    standardsTitle,
+    standardsParagraphs,
+    contactBadge,
+    features[]{
+      id,
+      label,
+      icon,
+      title,
+      description,
+      points
+    }
+  },
+  locatePage,
+  bookingPage,
+  footer,
+  services[]{
+    id,
+    title,
+    shortDescription,
+    icon,
+    popupTitle,
+    popupText,
+    "categoryImage": categoryImage.asset->url,
+    "carouselImage": carouselImage.asset->url,
+    "galleryCover": galleryCover.asset->url,
+    "galleryImages": galleryImages[].asset->url
+  },
+  testimonials[]{
+    text,
+    name,
+    username,
+    social,
+    "image": image.asset->url
+  }
+}`;

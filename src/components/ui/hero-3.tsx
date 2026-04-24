@@ -2,9 +2,10 @@
 
 import React from "react";
 import { motion, type Variants } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
+import { useSiteContent } from "@/components/providers/site-content-provider";
 import { cn } from "@/lib/utils";
-import { businessDetails } from "@/lib/business-details";
 
 interface AnimatedMarqueeHeroProps {
   tagline: string;
@@ -42,6 +43,9 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   className,
   onCtaClick,
 }) => {
+  const navigate = useNavigate();
+  const { siteContent } = useSiteContent();
+
   const fadeInVariants: Variants = {
     hidden: { opacity: 0, y: 14 },
     show: {
@@ -119,7 +123,9 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           transition={{ delay: 0.45 }}
           className="relative z-10 mx-auto -mt-6"
         >
-          <ActionButton onClick={onCtaClick}>{ctaText}</ActionButton>
+          <ActionButton onClick={onCtaClick ?? (() => navigate("/book-appointment"))}>
+            {ctaText}
+          </ActionButton>
         </motion.div>
       ) : null}
 
@@ -145,7 +151,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
             >
               <img
                 src={src}
-                alt={`${businessDetails.name} showcase ${index + 1}`}
+                alt={`${siteContent.business.name} showcase ${index + 1}`}
                 className="h-full w-full object-cover"
                 loading="lazy"
               />

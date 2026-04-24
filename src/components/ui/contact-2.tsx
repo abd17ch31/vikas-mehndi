@@ -3,11 +3,11 @@
 import React, { useMemo, useState } from "react";
 import { CalendarDays, MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { useSiteContent } from "@/components/providers/site-content-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { businessDetails } from "@/lib/business-details";
 
 interface Contact2Props {
   title?: string;
@@ -17,35 +17,37 @@ interface Contact2Props {
   address?: string;
 }
 
-const SERVICE_OPTIONS = [
-  "Bridal Mehndi",
-  "Engagement Mehndi",
-  "Portrait Mehndi",
-  "Festival Mehndi",
-  "Baby Shower Mehndi",
-  "Guest Mehndi",
-];
-
 export const Contact2 = ({
-  title = "Book Appointment",
-  description = "Share your event details and we will continue the conversation on WhatsApp for quick mehndi booking.",
-  phone = businessDetails.phone,
-  whatsappNumber = businessDetails.whatsappNumber,
-  address = businessDetails.location,
+  title,
+  description,
+  phone,
+  whatsappNumber,
+  address,
 }: Contact2Props) => {
+  const { siteContent } = useSiteContent();
+  const serviceOptions = siteContent.services.map((service) => `${service.title} Mehndi`);
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    service: "Bridal Mehndi",
+    service: serviceOptions[0] ?? "Bridal Mehndi",
     eventDate: "",
     venue: "",
     guests: "",
     message: "",
   });
 
+  const resolvedTitle = title ?? siteContent.bookingPage.formTitle;
+  const resolvedDescription =
+    description ?? siteContent.bookingPage.formDescription;
+  const resolvedPhone = phone ?? siteContent.business.phone;
+  const resolvedWhatsappNumber =
+    whatsappNumber ?? siteContent.business.whatsappNumber;
+  const resolvedAddress = address ?? siteContent.business.location;
+
   const whatsappHref = useMemo(() => {
     const message = [
-      `Hello ${businessDetails.name}, I would like to book an appointment.`,
+      `Hello ${siteContent.business.name}, I would like to book an appointment.`,
       `Name: ${form.name || "-"}`,
       `Phone: ${form.phone || "-"}`,
       `Service: ${form.service || "-"}`,
@@ -55,8 +57,8 @@ export const Contact2 = ({
       `Additional Details: ${form.message || "-"}`,
     ].join("\n");
 
-    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-  }, [form, whatsappNumber]);
+    return `https://wa.me/${resolvedWhatsappNumber}?text=${encodeURIComponent(message)}`;
+  }, [form, resolvedWhatsappNumber, siteContent.business.name]);
 
   const setField =
     (field: keyof typeof form) =>
@@ -71,9 +73,9 @@ export const Contact2 = ({
           <div className="mx-auto flex max-w-sm flex-col justify-between gap-10">
             <div className="text-center lg:text-left">
               <h1 className="mb-3 text-5xl font-semibold tracking-[-0.04em] text-[#5a2a17] lg:text-6xl">
-                {title}
+                {resolvedTitle}
               </h1>
-              <p className="text-base leading-7 text-[#7a5842]">{description}</p>
+              <p className="text-base leading-7 text-[#7a5842]">{resolvedDescription}</p>
             </div>
             <div className="mx-auto w-fit rounded-[1.75rem] border border-amber-300/35 bg-white/72 p-6 shadow-[0_18px_50px_rgba(176,106,31,0.10)] lg:mx-0">
               <h3 className="mb-6 text-center text-2xl font-semibold text-[#5a2a17] lg:text-left">
@@ -84,21 +86,21 @@ export const Contact2 = ({
                   <Phone className="mt-0.5 h-4 w-4 text-[#b06a1f]" />
                   <span>
                     <span className="font-bold">Call: </span>
-                    {phone}
+                    {resolvedPhone}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <MessageCircle className="mt-0.5 h-4 w-4 text-[#b06a1f]" />
                   <span>
                     <span className="font-bold">WhatsApp: </span>
-                    +91 77039 88599
+                    +{resolvedWhatsappNumber}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-4 w-4 text-[#b06a1f]" />
                   <span>
                     <span className="font-bold">Studio: </span>
-                    {address}
+                    {resolvedAddress}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -132,7 +134,7 @@ export const Contact2 = ({
                   onChange={setField("service")}
                   className="flex h-11 w-full rounded-xl border border-amber-300/40 bg-white/85 px-3 py-2 text-sm text-[#5a2a17] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                 >
-                  {SERVICE_OPTIONS.map((option) => (
+                  {serviceOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>

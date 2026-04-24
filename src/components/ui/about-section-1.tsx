@@ -1,50 +1,39 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
+import { useSiteContent } from "@/components/providers/site-content-provider";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 
-const artistImages = [
-  {
-    src: "/assets/artists/nitin.jpeg",
-    alt: "Nitin Nayak, owner and lead mehndi artist",
-    label: "Owner Artist",
-    figureClassName:
-      "col-span-2 row-span-2 shadow-[0_26px_70px_rgba(176,106,31,0.24)]",
-    imageClassName: "scale-105 object-[center_28%]",
-    animationNum: 2,
-  },
-  {
-    src: "/assets/artists/artist3.png",
-    alt: "Mehndi artist portrait",
-    label: "Artist",
-    figureClassName: "col-span-1 row-span-1",
-    imageClassName: "rotate-2 object-[center_18%]",
-    animationNum: 3,
-  },
-  {
-    src: "/assets/artists/monu%20.jpeg",
-    alt: "Mehndi artist portrait",
-    label: "Artist",
-    figureClassName: "col-span-1 row-span-1",
-    imageClassName: "-rotate-2 object-[center_20%]",
-    animationNum: 4,
-  },
-  {
-    src: "/assets/artists/artist2.png",
-    alt: "Mehndi artist portrait",
-    label: "Artist",
-    figureClassName: "col-span-2 row-span-1 sm:col-span-1",
-    imageClassName: "rotate-1 object-[center_18%]",
-    animationNum: 5,
-  },
-];
-
 export default function AboutSection1() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { siteContent } = useSiteContent();
+
+  const artistImages = useMemo(
+    () =>
+      siteContent.aboutSection.artistImages.map((artist, index) => ({
+        ...artist,
+        figureClassName:
+          index === 0
+            ? "col-span-2 row-span-2 shadow-[0_26px_70px_rgba(176,106,31,0.24)]"
+            : index === 3
+              ? "col-span-2 row-span-1 sm:col-span-1"
+              : "col-span-1 row-span-1",
+        imageClassName:
+          index === 0
+            ? "scale-105 object-[center_28%]"
+            : index === 1
+              ? "rotate-2 object-[center_18%]"
+              : index === 2
+                ? "-rotate-2 object-[center_20%]"
+                : "rotate-1 object-[center_18%]",
+        animationNum: index + 2,
+      })),
+    [siteContent.aboutSection.artistImages]
+  );
 
   const revealVariants = {
     visible: (i: number) => ({
@@ -119,7 +108,7 @@ export default function AboutSection1() {
 
       <div className="relative z-10 mx-auto max-w-2xl">
         <div className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold uppercase text-[#b06a1f]">
-          Why Choose Us
+          {siteContent.aboutSection.badge}
         </div>
 
         <h2 className="mb-6 text-3xl font-semibold text-[#5a2a17] sm:text-4xl md:text-5xl">
@@ -135,7 +124,7 @@ export default function AboutSection1() {
             }}
             containerClassName="justify-center text-center leading-[120%]"
           >
-            {"Why clients choose our artistry, precision, and celebration-ready mehndi experience"}
+            {siteContent.aboutSection.title}
           </VerticalCutReveal>
         </h2>
 
@@ -146,9 +135,7 @@ export default function AboutSection1() {
           timelineRef={heroRef}
           className="mb-8 text-center text-sm leading-relaxed text-[#7a5842] sm:text-lg"
         >
-          Our artists focus on graceful detailing, clean application, patient service,
-          and designs that suit the event, the outfit, and the client’s style. From
-          bridal bookings to guest groups, the experience stays polished from start to finish.
+          {siteContent.aboutSection.description}
         </TimelineContent>
 
         <TimelineContent
@@ -159,10 +146,10 @@ export default function AboutSection1() {
           className="mx-auto"
         >
           <Link
-            to="/why-choose-us"
+            to={siteContent.aboutSection.ctaHref}
             className="mx-auto flex w-fit gap-2 rounded-full border border-amber-300 bg-amber-400 px-5 py-3 text-white shadow-lg shadow-amber-200 transition-all duration-300 ease-in-out hover:gap-4 hover:bg-amber-500"
           >
-            Explore Why Choose Us <ArrowRight />
+            {siteContent.aboutSection.ctaLabel} <ArrowRight />
           </Link>
         </TimelineContent>
       </div>
@@ -170,7 +157,7 @@ export default function AboutSection1() {
       <div className="mx-auto grid max-w-6xl auto-rows-[9.5rem] grid-cols-2 gap-4 pt-16 sm:auto-rows-[11rem] sm:grid-cols-4 md:auto-rows-[13rem] lg:auto-rows-[15rem]">
         {artistImages.map((artist, index) => (
           <TimelineContent
-            key={artist.src}
+            key={`${artist.src}-${index}`}
             as="figure"
             animationNum={artist.animationNum}
             timelineRef={heroRef}

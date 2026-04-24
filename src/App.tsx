@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import { Suspense, lazy, type JSX } from "react";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -9,6 +9,10 @@ import { OurWorkPage } from "@/components/ui/our-work-page";
 import { PageBackground } from "@/components/ui/page-background";
 import { ServicesPage } from "@/components/ui/services-page";
 import { WhyChooseUsPage } from "@/components/ui/why-choose-us-page";
+
+const StudioPage = lazy(async () => import("@/components/ui/studio-page").then((module) => ({
+  default: module.StudioPage,
+})));
 
 function App(): JSX.Element {
   return (
@@ -22,6 +26,14 @@ function App(): JSX.Element {
           <Route path="/our-work" element={<OurWorkPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/locate-us" element={<LocateUsPage />} />
+          <Route
+            path="/studio/*"
+            element={
+              <Suspense fallback={<div className="min-h-screen" />}>
+                <StudioPage />
+              </Suspense>
+            }
+          />
         </Routes>
       </div>
     </BrowserRouter>
