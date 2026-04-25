@@ -13,6 +13,9 @@ import { WhyChooseUsPage } from "@/components/ui/why-choose-us-page";
 const StudioPage = lazy(async () => import("@/components/ui/studio-page").then((module) => ({
   default: module.StudioPage,
 })));
+const AdminPage = lazy(async () => import("@/components/ui/admin-page").then((module) => ({
+  default: module.AdminPage,
+})));
 
 function App(): JSX.Element {
   return (
@@ -26,6 +29,14 @@ function App(): JSX.Element {
           <Route path="/our-work" element={<OurWorkPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/locate-us" element={<LocateUsPage />} />
+          <Route
+            path="/admin"
+            element={
+              <Suspense fallback={<div className="min-h-screen" />}>
+                <AdminPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/studio/*"
             element={
