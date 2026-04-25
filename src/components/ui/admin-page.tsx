@@ -14,6 +14,7 @@ import {
   Lock,
   LogOut,
   RefreshCcw,
+  RotateCcw,
 } from "lucide-react";
 
 import {
@@ -23,14 +24,82 @@ import {
   loginAdmin,
   saveAdminImages,
   uploadAdminImage,
+  uploadAdminImageFromUrl,
 } from "@/lib/admin/api";
 import type {
   AdminImage,
   AdminImagesState,
   AdminServiceImages,
 } from "@/lib/admin/types";
+import { defaultSiteContent } from "@/lib/cms/default-site-content";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
+
+const asDefaultImage = (url: string): AdminImage => ({
+  assetId: `default:${url}`,
+  url,
+});
+
+const defaultImagesState: AdminImagesState = {
+  business: {
+    logo: asDefaultImage(defaultSiteContent.business.logoUrl),
+  },
+  hero: {
+    showcaseImages: defaultSiteContent.hero.showcaseImages.map(asDefaultImage),
+  },
+  aboutSection: {
+    artistImages: defaultSiteContent.aboutSection.artistImages.map((item) =>
+      asDefaultImage(item.src)
+    ),
+  },
+  socialSection: {
+    instagramIcon: asDefaultImage(defaultSiteContent.socialSection.links[0].image),
+    facebookIcon: asDefaultImage(defaultSiteContent.socialSection.links[1].image),
+    whatsappIcon: asDefaultImage(defaultSiteContent.socialSection.links[2].image),
+    googleIcon: asDefaultImage(defaultSiteContent.socialSection.links[3].image),
+  },
+  services: {
+    bridal: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[0].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[0].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[0].galleryCover),
+      galleryImages: defaultSiteContent.services[0].galleryImages.map(asDefaultImage),
+    },
+    engagement: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[1].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[1].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[1].galleryCover),
+      galleryImages: defaultSiteContent.services[1].galleryImages.map(asDefaultImage),
+    },
+    portrait: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[2].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[2].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[2].galleryCover),
+      galleryImages: defaultSiteContent.services[2].galleryImages.map(asDefaultImage),
+    },
+    babyShower: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[3].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[3].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[3].galleryCover),
+      galleryImages: defaultSiteContent.services[3].galleryImages.map(asDefaultImage),
+    },
+    festival: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[4].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[4].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[4].galleryCover),
+      galleryImages: defaultSiteContent.services[4].galleryImages.map(asDefaultImage),
+    },
+    guest: {
+      categoryImage: asDefaultImage(defaultSiteContent.services[5].categoryImage),
+      carouselImage: asDefaultImage(defaultSiteContent.services[5].carouselImage),
+      galleryCover: asDefaultImage(defaultSiteContent.services[5].galleryCover),
+      galleryImages: defaultSiteContent.services[5].galleryImages.map(asDefaultImage),
+    },
+  },
+  testimonials: defaultSiteContent.testimonials.map((item) =>
+    asDefaultImage(item.image)
+  ),
+};
 
 const serviceEntries: Array<{
   key: keyof AdminImagesState["services"];
@@ -85,13 +154,18 @@ function Section({
 function SingleImageEditor({
   label,
   image,
+  defaultImage,
+  onReset,
   onReplace,
 }: {
   label: string;
   image?: AdminImage;
+  defaultImage?: AdminImage;
+  onReset: () => Promise<void>;
   onReplace: (file: File) => Promise<void>;
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -105,21 +179,46 @@ function SingleImageEditor({
     }
   };
 
+  const handleReset = async () => {
+    setIsResetting(true);
+    try {
+      await onReset();
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <div className="rounded-[1.5rem] border border-amber-200/60 bg-[#fffaf0] p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9a5a1a]">
           {label}
         </p>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-400 px-4 py-2 text-xs font-semibold text-[#2a120d] transition hover:bg-amber-300">
-          {isUploading ? (
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-          ) : (
-            <ImagePlus className="h-4 w-4" />
-          )}
-          Replace
-          <input type="file" accept="image/*" className="hidden" onChange={handleChange} />
-        </label>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled={!defaultImage || isResetting}
+            onClick={() => void handleReset()}
+            className="inline-flex items-center justify-center rounded-full bg-[#fff3dd] p-2 text-[#7a4b24] transition hover:bg-[#ffe7b9] disabled:opacity-40"
+            aria-label={`Reset ${label} to default`}
+            title="Reset to default"
+          >
+            {isResetting ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : (
+              <RotateCcw className="h-4 w-4" />
+            )}
+          </button>
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-400 px-4 py-2 text-xs font-semibold text-[#2a120d] transition hover:bg-amber-300">
+            {isUploading ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : (
+              <ImagePlus className="h-4 w-4" />
+            )}
+            Replace
+            <input type="file" accept="image/*" className="hidden" onChange={handleChange} />
+          </label>
+        </div>
       </div>
       <div className="overflow-hidden rounded-[1.2rem] border border-amber-200/60 bg-white">
         {image ? (
@@ -142,13 +241,17 @@ function SingleImageEditor({
 function ImageListEditor({
   title,
   images,
+  defaultImages,
   onAdd,
+  onResetAt,
   onReplaceAt,
   onMove,
 }: {
   title: string;
   images: AdminImage[];
+  defaultImages: AdminImage[];
   onAdd: (file: File) => Promise<void>;
+  onResetAt: (index: number) => Promise<void>;
   onReplaceAt: (index: number, file: File) => Promise<void>;
   onMove: (from: number, to: number) => Promise<void>;
 }) {
@@ -178,6 +281,15 @@ function ImageListEditor({
         event.target.value = "";
       }
     };
+
+  const handleReset = async (index: number) => {
+    setBusyKey(`reset-${index}`);
+    try {
+      await onResetAt(index);
+    } finally {
+      setBusyKey(null);
+    }
+  };
 
   return (
     <div className="rounded-[1.5rem] border border-amber-200/60 bg-[#fffaf0] p-4">
@@ -234,6 +346,20 @@ function ImageListEditor({
                   >
                     <ArrowDown className="h-4 w-4" />
                   </button>
+                  <button
+                    type="button"
+                    disabled={!defaultImages[index] || busyKey === `reset-${index}`}
+                    onClick={() => void handleReset(index)}
+                    className="rounded-full bg-[#fff3dd] p-2 text-[#7a4b24] transition hover:bg-[#ffe7b9] disabled:opacity-40"
+                    aria-label={`Reset ${title} ${index + 1} to default`}
+                    title="Reset to default"
+                  >
+                    {busyKey === `reset-${index}` ? (
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RotateCcw className="h-4 w-4" />
+                    )}
+                  </button>
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#fff3dd] px-3 py-2 text-xs font-semibold text-[#7a4b24] transition hover:bg-[#ffe7b9]">
                     {busyKey === `replace-${index}` ? (
                       <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -261,18 +387,26 @@ function ImageListEditor({
 function ServiceEditor({
   label,
   service,
+  defaultService,
+  onResetSingle,
   onReplaceSingle,
   onAddGalleryImage,
+  onResetGalleryImage,
   onReplaceGalleryImage,
   onMoveGalleryImage,
 }: {
   label: string;
   service: AdminServiceImages;
+  defaultService: AdminServiceImages;
+  onResetSingle: (
+    field: keyof Omit<AdminServiceImages, "galleryImages">
+  ) => Promise<void>;
   onReplaceSingle: (
     field: keyof Omit<AdminServiceImages, "galleryImages">,
     file: File
   ) => Promise<void>;
   onAddGalleryImage: (file: File) => Promise<void>;
+  onResetGalleryImage: (index: number) => Promise<void>;
   onReplaceGalleryImage: (index: number, file: File) => Promise<void>;
   onMoveGalleryImage: (from: number, to: number) => Promise<void>;
 }) {
@@ -283,23 +417,31 @@ function ServiceEditor({
         <SingleImageEditor
           label="Category Image"
           image={service.categoryImage}
+          defaultImage={defaultService.categoryImage}
+          onReset={() => onResetSingle("categoryImage")}
           onReplace={(file) => onReplaceSingle("categoryImage", file)}
         />
         <SingleImageEditor
           label="Carousel Image"
           image={service.carouselImage}
+          defaultImage={defaultService.carouselImage}
+          onReset={() => onResetSingle("carouselImage")}
           onReplace={(file) => onReplaceSingle("carouselImage", file)}
         />
         <SingleImageEditor
           label="Gallery Cover"
           image={service.galleryCover}
+          defaultImage={defaultService.galleryCover}
+          onReset={() => onResetSingle("galleryCover")}
           onReplace={(file) => onReplaceSingle("galleryCover", file)}
         />
       </div>
       <ImageListEditor
         title={`${label} Gallery Images`}
         images={service.galleryImages}
+        defaultImages={defaultService.galleryImages}
         onAdd={onAddGalleryImage}
+        onResetAt={onResetGalleryImage}
         onReplaceAt={onReplaceGalleryImage}
         onMove={onMoveGalleryImage}
       />
@@ -393,6 +535,17 @@ export function AdminPage() {
     }
 
     return uploadAdminImage(token, file);
+  };
+
+  const restoreDefaultImage = async (defaultImage?: AdminImage) => {
+    if (!token || !defaultImage) {
+      throw new Error("Missing default image.");
+    }
+
+    const fileName =
+      defaultImage.url.split("/").pop()?.split("?")[0] ?? `default-${Date.now()}.jpg`;
+
+    return uploadAdminImageFromUrl(token, defaultImage.url, fileName);
   };
 
   const authStatusLabel = useMemo(() => {
@@ -525,6 +678,16 @@ export function AdminPage() {
               <SingleImageEditor
                 label="Logo"
                 image={images.business.logo}
+                defaultImage={defaultImagesState.business.logo}
+                onReset={async () => {
+                  const nextImage = await restoreDefaultImage(defaultImagesState.business.logo);
+                  await save({
+                    ...images,
+                    business: {
+                      logo: nextImage,
+                    },
+                  });
+                }}
                 onReplace={async (file) => {
                   const nextImage = await uploadAndGetImage(file);
                   await save({
@@ -545,6 +708,7 @@ export function AdminPage() {
                 <ImageListEditor
                   title="Hero Showcase Images"
                   images={images.hero.showcaseImages}
+                  defaultImages={defaultImagesState.hero.showcaseImages}
                   onAdd={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -552,6 +716,17 @@ export function AdminPage() {
                       hero: {
                         showcaseImages: [...images.hero.showcaseImages, uploaded],
                       },
+                    });
+                  }}
+                  onResetAt={async (index) => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.hero.showcaseImages[index]
+                    );
+                    const next = [...images.hero.showcaseImages];
+                    next[index] = uploaded;
+                    await save({
+                      ...images,
+                      hero: { showcaseImages: next },
                     });
                   }}
                   onReplaceAt={async (index, file) => {
@@ -577,6 +752,7 @@ export function AdminPage() {
                 <ImageListEditor
                   title="About Section Artist Images"
                   images={images.aboutSection.artistImages}
+                  defaultImages={defaultImagesState.aboutSection.artistImages}
                   onAdd={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -584,6 +760,17 @@ export function AdminPage() {
                       aboutSection: {
                         artistImages: [...images.aboutSection.artistImages, uploaded],
                       },
+                    });
+                  }}
+                  onResetAt={async (index) => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.aboutSection.artistImages[index]
+                    );
+                    const next = [...images.aboutSection.artistImages];
+                    next[index] = uploaded;
+                    await save({
+                      ...images,
+                      aboutSection: { artistImages: next },
                     });
                   }}
                   onReplaceAt={async (index, file) => {
@@ -613,6 +800,19 @@ export function AdminPage() {
                 <SingleImageEditor
                   label="Instagram Icon"
                   image={images.socialSection.instagramIcon}
+                  defaultImage={defaultImagesState.socialSection.instagramIcon}
+                  onReset={async () => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.socialSection.instagramIcon
+                    );
+                    await save({
+                      ...images,
+                      socialSection: {
+                        ...images.socialSection,
+                        instagramIcon: uploaded,
+                      },
+                    });
+                  }}
                   onReplace={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -627,6 +827,19 @@ export function AdminPage() {
                 <SingleImageEditor
                   label="Facebook Icon"
                   image={images.socialSection.facebookIcon}
+                  defaultImage={defaultImagesState.socialSection.facebookIcon}
+                  onReset={async () => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.socialSection.facebookIcon
+                    );
+                    await save({
+                      ...images,
+                      socialSection: {
+                        ...images.socialSection,
+                        facebookIcon: uploaded,
+                      },
+                    });
+                  }}
                   onReplace={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -641,6 +854,19 @@ export function AdminPage() {
                 <SingleImageEditor
                   label="WhatsApp Icon"
                   image={images.socialSection.whatsappIcon}
+                  defaultImage={defaultImagesState.socialSection.whatsappIcon}
+                  onReset={async () => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.socialSection.whatsappIcon
+                    );
+                    await save({
+                      ...images,
+                      socialSection: {
+                        ...images.socialSection,
+                        whatsappIcon: uploaded,
+                      },
+                    });
+                  }}
                   onReplace={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -655,6 +881,19 @@ export function AdminPage() {
                 <SingleImageEditor
                   label="Google Icon"
                   image={images.socialSection.googleIcon}
+                  defaultImage={defaultImagesState.socialSection.googleIcon}
+                  onReset={async () => {
+                    const uploaded = await restoreDefaultImage(
+                      defaultImagesState.socialSection.googleIcon
+                    );
+                    await save({
+                      ...images,
+                      socialSection: {
+                        ...images.socialSection,
+                        googleIcon: uploaded,
+                      },
+                    });
+                  }}
                   onReplace={async (file) => {
                     const uploaded = await uploadAndGetImage(file);
                     await save({
@@ -679,6 +918,22 @@ export function AdminPage() {
                     key={entry.key}
                     label={entry.label}
                     service={images.services[entry.key]}
+                    defaultService={defaultImagesState.services[entry.key]}
+                    onResetSingle={async (field) => {
+                      const uploaded = await restoreDefaultImage(
+                        defaultImagesState.services[entry.key][field]
+                      );
+                      await save({
+                        ...images,
+                        services: {
+                          ...images.services,
+                          [entry.key]: {
+                            ...images.services[entry.key],
+                            [field]: uploaded,
+                          },
+                        },
+                      });
+                    }}
                     onReplaceSingle={async (field, file) => {
                       const uploaded = await uploadAndGetImage(file);
                       await save({
@@ -704,6 +959,23 @@ export function AdminPage() {
                               ...images.services[entry.key].galleryImages,
                               uploaded,
                             ],
+                          },
+                        },
+                      });
+                    }}
+                    onResetGalleryImage={async (index) => {
+                      const uploaded = await restoreDefaultImage(
+                        defaultImagesState.services[entry.key].galleryImages[index]
+                      );
+                      const next = [...images.services[entry.key].galleryImages];
+                      next[index] = uploaded;
+                      await save({
+                        ...images,
+                        services: {
+                          ...images.services,
+                          [entry.key]: {
+                            ...images.services[entry.key],
+                            galleryImages: next,
                           },
                         },
                       });
@@ -747,11 +1019,23 @@ export function AdminPage() {
               <ImageListEditor
                 title="Testimonial Images"
                 images={images.testimonials}
+                defaultImages={defaultImagesState.testimonials}
                 onAdd={async (file) => {
                   const uploaded = await uploadAndGetImage(file);
                   await save({
                     ...images,
                     testimonials: [...images.testimonials, uploaded],
+                  });
+                }}
+                onResetAt={async (index) => {
+                  const uploaded = await restoreDefaultImage(
+                    defaultImagesState.testimonials[index]
+                  );
+                  const next = [...images.testimonials];
+                  next[index] = uploaded;
+                  await save({
+                    ...images,
+                    testimonials: next,
                   });
                 }}
                 onReplaceAt={async (index, file) => {

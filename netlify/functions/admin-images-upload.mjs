@@ -9,13 +9,25 @@ export async function handler(event) {
     return json(401, { error: "Unauthorized." });
   }
 
-  const { base64, contentType, filename } = JSON.parse(event.body || "{}");
+  const { base64, contentType, filename, sourceUrl } = JSON.parse(event.body || "{}");
 
-  if (!base64 || !contentType) {
+  if (!contentType || (!base64 && !sourceUrl)) {
     return json(400, { error: "Missing image payload." });
   }
 
-  const buffer = Buffer.from(base64, "base64");
+  let buffer;
+
+  if (base64) {
+    buffer = Buffer.from(base64, "base64");
+  } else {
+    const response = await fetch(sourceUrl);
+    if (!response.ok) {
+      return json(400, { error: "Failed to fetch default image." });
+    }
+
+    buffer = Buffer.from(await response.arrayBuffer());
+  }
+
   const asset = await writeClient.assets.upload("image", buffer, {
     contentType,
     filename: filename || `upload-${Date.now()}`,

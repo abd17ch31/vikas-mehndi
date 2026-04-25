@@ -88,3 +88,22 @@ export const uploadAdminImage = async (token: string, file: File) => {
     token
   );
 };
+
+export const uploadAdminImageFromUrl = async (
+  token: string,
+  sourceUrl: string,
+  filename: string,
+  contentType = "image/jpeg"
+) =>
+  api<AdminImage>(
+    "admin-images-upload",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        sourceUrl,
+        filename,
+        contentType,
+      }),
+    },
+    token
+  );
