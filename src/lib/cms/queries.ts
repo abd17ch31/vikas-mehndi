@@ -1,104 +1,60 @@
 export const siteContentQuery = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   business{
-    name,
-    owner,
-    location,
-    phone,
-    whatsappNumber,
-    instagramUrl,
-    instagramHandle,
-    facebookUrl,
-    xUrl,
-    mapsUrl,
-    areaLabel,
-    regionLabel,
     "logoUrl": logo.asset->url
   },
-  navigation{
-    links[]{
-      label,
-      href
-    },
-    ctaLabel,
-    ctaHref
-  },
   hero{
-    tagline,
-    title,
-    description,
-    ctaText,
     "showcaseImages": showcaseImages[].asset->url
   },
-  homeServicesSection,
-  testimonialsSection,
   aboutSection{
-    badge,
-    title,
-    description,
-    ctaLabel,
-    ctaHref,
     artistImages[]{
-      "src": image.asset->url,
-      alt,
-      label
+      "src": image.asset->url
     }
   },
   socialSection{
-    badge,
-    title,
-    description,
-    links[]{
-      name,
-      image,
-      href
-    }
+    "instagramIcon": instagramIcon.asset->url,
+    "facebookIcon": facebookIcon.asset->url,
+    "whatsappIcon": whatsappIcon.asset->url,
+    "googleIcon": googleIcon.asset->url
   },
-  servicesPage,
-  galleryPage,
-  whyChoosePage{
-    badge,
-    title,
-    description,
-    callLabel,
-    backLabel,
-    highlights[]{
-      value,
-      label
+  services{
+    bridal{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
     },
-    interactiveBadge,
-    standardsBadge,
-    standardsTitle,
-    standardsParagraphs,
-    contactBadge,
-    features[]{
-      id,
-      label,
-      icon,
-      title,
-      description,
-      points
+    engagement{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
+    },
+    portrait{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
+    },
+    babyShower{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
+    },
+    festival{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
+    },
+    guest{
+      "categoryImage": categoryImage.asset->url,
+      "carouselImage": carouselImage.asset->url,
+      "galleryCover": galleryCover.asset->url,
+      "galleryImages": galleryImages[].asset->url
     }
-  },
-  locatePage,
-  bookingPage,
-  footer,
-  services[]{
-    id,
-    title,
-    shortDescription,
-    icon,
-    popupTitle,
-    popupText,
-    "categoryImage": categoryImage.asset->url,
-    "carouselImage": carouselImage.asset->url,
-    "galleryCover": galleryCover.asset->url,
-    "galleryImages": galleryImages[].asset->url
   },
   testimonials[]{
-    text,
-    name,
-    username,
-    social,
     "image": image.asset->url
   }
 }`;

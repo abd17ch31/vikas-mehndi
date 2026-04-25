@@ -154,3 +154,46 @@ export type SiteContent = {
   services: ServiceContent[];
   testimonials: TestimonialContent[];
 };
+
+export type SiteImageContent = {
+  business?: {
+    logoUrl?: string;
+  };
+  hero?: {
+    showcaseImages?: string[];
+  };
+  aboutSection?: {
+    artistImages?: Array<{
+      src?: string;
+    }>;
+  };
+  socialSection?: {
+    instagramIcon?: string;
+    facebookIcon?: string;
+    whatsappIcon?: string;
+    googleIcon?: string;
+  };
+  services?: {
+    bridal?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+    engagement?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+    portrait?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+    babyShower?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+    festival?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+    guest?: Partial<
+      Pick<ServiceContent, "categoryImage" | "carouselImage" | "galleryCover" | "galleryImages">
+    >;
+  };
+  testimonials?: Array<{
+    image?: string;
+  }>;
+};

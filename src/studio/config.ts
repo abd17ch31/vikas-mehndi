@@ -9,7 +9,7 @@ export const studioConfig = defineConfig({
   basePath: sanityConfig.studioBasePath,
   projectId: sanityConfig.projectId || "missing-project-id",
   dataset: sanityConfig.dataset,
-  title: "Vikas Mehndi CMS",
+  title: "Vikas Mehndi Images",
   schema: {
     types: schemaTypes,
   },
@@ -20,7 +20,7 @@ export const studioConfig = defineConfig({
           .title("Content")
           .items([
             S.listItem()
-              .title("Site Settings")
+              .title("Site Images")
               .child(
                 S.document()
                   .schemaType("siteSettings")
