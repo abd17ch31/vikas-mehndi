@@ -22,6 +22,9 @@ const api = async <T>(
       .clone()
       .json()
       .catch(async () => ({ error: await response.text().catch(() => fallback) }));
+    if (response.status === 401) {
+      clearAdminSession();
+    }
     throw new Error(error.error || fallback);
   }
 

@@ -200,6 +200,10 @@ const base64UrlEncode = (value) => Buffer.from(value).toString("base64url");
 const base64UrlDecode = (value) => Buffer.from(value, "base64url").toString("utf8");
 
 export const createSessionToken = () => {
+  if (!sessionSecret) {
+    throw new Error("ADMIN_SESSION_SECRET is not configured.");
+  }
+
   const payload = JSON.stringify({
     exp: Date.now() + 1000 * 60 * 60 * 12,
   });
@@ -215,20 +219,25 @@ export const createSessionToken = () => {
 export const verifySessionToken = (token) => {
   if (!token || !sessionSecret) return false;
 
-  const [encodedPayload, signature] = token.split(".");
-  if (!encodedPayload || !signature) return false;
+  try {
+    const [encodedPayload, signature] = token.split(".");
+    if (!encodedPayload || !signature) return false;
 
-  const expectedSignature = crypto
-    .createHmac("sha256", sessionSecret)
-    .update(encodedPayload)
-    .digest("base64url");
+    const expectedSignature = crypto
+      .createHmac("sha256", sessionSecret)
+      .update(encodedPayload)
+      .digest("base64url");
 
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+    const signatureBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+    if (signatureBuffer.length !== expectedBuffer.length) return false;
+    if (!crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) return false;
+
+    const payload = JSON.parse(base64UrlDecode(encodedPayload));
+    return payload.exp > Date.now();
+  } catch {
     return false;
   }
-
-  const payload = JSON.parse(base64UrlDecode(encodedPayload));
-  return payload.exp > Date.now();
 };
 
 export const getBearerToken = (headers = {}) => {
