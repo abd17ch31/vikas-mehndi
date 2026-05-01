@@ -1,60 +1,60 @@
 export const siteContentQuery = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   business{
-    "logoUrl": logo.asset->url
+    "logoUrl": coalesce(logo.asset->url, logo.url)
   },
   hero{
-    "showcaseImages": showcaseImages[].asset->url
+    "showcaseImages": showcaseImages[]{"url": coalesce(asset->url, url)}[].url
   },
   aboutSection{
     artistImages[]{
-      "src": image.asset->url
+      "src": coalesce(image.asset->url, image.url)
     }
   },
   socialSection{
-    "instagramIcon": instagramIcon.asset->url,
-    "facebookIcon": facebookIcon.asset->url,
-    "whatsappIcon": whatsappIcon.asset->url,
-    "googleIcon": googleIcon.asset->url
+    "instagramIcon": coalesce(instagramIcon.asset->url, instagramIcon.url),
+    "facebookIcon": coalesce(facebookIcon.asset->url, facebookIcon.url),
+    "whatsappIcon": coalesce(whatsappIcon.asset->url, whatsappIcon.url),
+    "googleIcon": coalesce(googleIcon.asset->url, googleIcon.url)
   },
   services{
     bridal{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     },
     engagement{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     },
     portrait{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     },
     babyShower{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     },
     festival{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     },
     guest{
-      "categoryImage": categoryImage.asset->url,
-      "carouselImage": carouselImage.asset->url,
-      "galleryCover": galleryCover.asset->url,
-      "galleryImages": galleryImages[].asset->url
+      "categoryImage": coalesce(categoryImage.asset->url, categoryImage.url),
+      "carouselImage": coalesce(carouselImage.asset->url, carouselImage.url),
+      "galleryCover": coalesce(galleryCover.asset->url, galleryCover.url),
+      "galleryImages": galleryImages[]{"url": coalesce(asset->url, url)}[].url
     }
   },
   testimonials[]{
-    "image": image.asset->url
+    "image": coalesce(image.asset->url, image.url)
   }
 }`;

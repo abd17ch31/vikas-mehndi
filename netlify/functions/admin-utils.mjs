@@ -2,209 +2,173 @@ import crypto from "node:crypto";
 
 import { createClient } from "@sanity/client";
 
-const projectId = process.env.VITE_SANITY_PROJECT_ID;
-const dataset = process.env.VITE_SANITY_DATASET || "production";
+const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID;
+const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
 const apiVersion = process.env.VITE_SANITY_API_VERSION || "2025-02-19";
-const writeToken = process.env.SANITY_API_WRITE_TOKEN;
-const adminPassword = process.env.ADMIN_DASHBOARD_PASSWORD;
+const writeToken = process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN;
+const adminPassword = process.env.ADMIN_DASHBOARD_PASSWORD || process.env.ADMIN_PASSWORD;
 const sessionSecret = process.env.ADMIN_SESSION_SECRET;
 
 export const imageQuery = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   business{
     "logo": select(
-      defined(logo.asset) => {
-        "assetId": logo.asset->_id,
-        "url": logo.asset->url
+      defined(logo.asset) || defined(logo.url) => {
+        "assetId": coalesce(logo.asset->_id, logo.assetId),
+        "url": coalesce(logo.asset->url, logo.url)
       }
     )
   },
   hero{
     showcaseImages[]{
-      "assetId": asset->_id,
-      "url": asset->url
+      "assetId": coalesce(asset->_id, assetId),
+      "url": coalesce(asset->url, url)
     }
   },
   aboutSection{
     artistImages[]{
-      "assetId": image.asset->_id,
-      "url": image.asset->url
+      "assetId": coalesce(image.asset->_id, image.assetId),
+      "url": coalesce(image.asset->url, image.url)
     }
   },
   socialSection{
     "instagramIcon": select(
-      defined(instagramIcon.asset) => {
-        "assetId": instagramIcon.asset->_id,
-        "url": instagramIcon.asset->url
+      defined(instagramIcon.asset) || defined(instagramIcon.url) => {
+        "assetId": coalesce(instagramIcon.asset->_id, instagramIcon.assetId),
+        "url": coalesce(instagramIcon.asset->url, instagramIcon.url)
       }
     ),
     "facebookIcon": select(
-      defined(facebookIcon.asset) => {
-        "assetId": facebookIcon.asset->_id,
-        "url": facebookIcon.asset->url
+      defined(facebookIcon.asset) || defined(facebookIcon.url) => {
+        "assetId": coalesce(facebookIcon.asset->_id, facebookIcon.assetId),
+        "url": coalesce(facebookIcon.asset->url, facebookIcon.url)
       }
     ),
     "whatsappIcon": select(
-      defined(whatsappIcon.asset) => {
-        "assetId": whatsappIcon.asset->_id,
-        "url": whatsappIcon.asset->url
+      defined(whatsappIcon.asset) || defined(whatsappIcon.url) => {
+        "assetId": coalesce(whatsappIcon.asset->_id, whatsappIcon.assetId),
+        "url": coalesce(whatsappIcon.asset->url, whatsappIcon.url)
       }
     ),
     "googleIcon": select(
-      defined(googleIcon.asset) => {
-        "assetId": googleIcon.asset->_id,
-        "url": googleIcon.asset->url
+      defined(googleIcon.asset) || defined(googleIcon.url) => {
+        "assetId": coalesce(googleIcon.asset->_id, googleIcon.assetId),
+        "url": coalesce(googleIcon.asset->url, googleIcon.url)
       }
     )
   },
   services{
     bridal{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     },
     engagement{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     },
     portrait{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     },
     babyShower{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     },
     festival{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     },
     guest{
-      "categoryImage": select(
-        defined(categoryImage.asset) => {
-          "assetId": categoryImage.asset->_id,
-          "url": categoryImage.asset->url
-        }
-      ),
-      "carouselImage": select(
-        defined(carouselImage.asset) => {
-          "assetId": carouselImage.asset->_id,
-          "url": carouselImage.asset->url
-        }
-      ),
-      "galleryCover": select(
-        defined(galleryCover.asset) => {
-          "assetId": galleryCover.asset->_id,
-          "url": galleryCover.asset->url
-        }
-      ),
+      "categoryImage": select(defined(categoryImage.asset) || defined(categoryImage.url) => {
+        "assetId": coalesce(categoryImage.asset->_id, categoryImage.assetId),
+        "url": coalesce(categoryImage.asset->url, categoryImage.url)
+      }),
+      "carouselImage": select(defined(carouselImage.asset) || defined(carouselImage.url) => {
+        "assetId": coalesce(carouselImage.asset->_id, carouselImage.assetId),
+        "url": coalesce(carouselImage.asset->url, carouselImage.url)
+      }),
+      "galleryCover": select(defined(galleryCover.asset) || defined(galleryCover.url) => {
+        "assetId": coalesce(galleryCover.asset->_id, galleryCover.assetId),
+        "url": coalesce(galleryCover.asset->url, galleryCover.url)
+      }),
       galleryImages[]{
-        "assetId": asset->_id,
-        "url": asset->url
+        "assetId": coalesce(asset->_id, assetId),
+        "url": coalesce(asset->url, url)
       }
     }
   },
   testimonials[]{
-    "assetId": image.asset->_id,
-    "url": image.asset->url
+    "assetId": coalesce(image.asset->_id, image.assetId),
+    "url": coalesce(image.asset->url, image.url)
   }
 }`;
 
@@ -282,23 +246,40 @@ export const verifyPassword = (password) =>
   Boolean(adminPassword) && password === adminPassword;
 
 export const ref = (assetId) =>
-  assetId ? { _type: "reference", _ref: assetId } : undefined;
+  assetId && !assetId.startsWith("default:")
+    ? { _type: "reference", _ref: assetId }
+    : undefined;
 
-export const imageField = (assetId) =>
-  assetId ? { _type: "image", asset: ref(assetId) } : undefined;
+export const imageField = (image) => {
+  if (!image?.assetId && !image?.url) return undefined;
+
+  const asset = ref(image.assetId);
+  return asset
+    ? { _type: "image", asset }
+    : { _type: "image", assetId: image.assetId, url: image.url };
+};
+
+const keyFor = (item, index) =>
+  Buffer.from(`${item?.assetId || item?.url || "image"}-${index}`)
+    .toString("base64url")
+    .slice(0, 12);
 
 export const imageArray = (items = []) =>
   items
-    .filter((item) => item?.assetId)
-    .map((item) => ({
+    .filter((item) => item?.assetId || item?.url)
+    .map((item, index) => ({
+      _key: keyFor(item, index),
       _type: "image",
-      asset: ref(item.assetId),
+      ...(ref(item.assetId)
+        ? { asset: ref(item.assetId) }
+        : { assetId: item.assetId, url: item.url }),
     }));
 
 export const imageItemArray = (items = []) =>
   items
-    .filter((item) => item?.assetId)
-    .map((item) => ({
+    .filter((item) => item?.assetId || item?.url)
+    .map((item, index) => ({
+      _key: keyFor(item, index),
       _type: "imageItem",
-      image: imageField(item.assetId),
+      image: imageField(item),
     }));

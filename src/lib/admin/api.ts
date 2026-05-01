@@ -17,8 +17,12 @@ const api = async <T>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error || "Request failed.");
+    const fallback = `Request failed (${response.status}).`;
+    const error = await response
+      .clone()
+      .json()
+      .catch(async () => ({ error: await response.text().catch(() => fallback) }));
+    throw new Error(error.error || fallback);
   }
 
   return response.json() as Promise<T>;

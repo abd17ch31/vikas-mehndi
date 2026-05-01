@@ -8,15 +8,16 @@ import {
 } from "./admin-utils.mjs";
 
 export async function handler(event) {
-  if (event.httpMethod !== "POST") {
-    return json(405, { error: "Method not allowed." });
-  }
+  try {
+    if (event.httpMethod !== "POST") {
+      return json(405, { error: "Method not allowed." });
+    }
 
-  if (!requireSession(event.headers)) {
-    return json(401, { error: "Unauthorized." });
-  }
+    if (!requireSession(event.headers)) {
+      return json(401, { error: "Unauthorized." });
+    }
 
-  const payload = JSON.parse(event.body || "{}");
+    const payload = JSON.parse(event.body || "{}");
 
   await writeClient.createIfNotExists({
     _id: "siteSettings",
@@ -27,7 +28,7 @@ export async function handler(event) {
     .patch("siteSettings")
     .set({
       business: {
-        logo: imageField(payload.business?.logo?.assetId),
+        logo: imageField(payload.business?.logo),
       },
       hero: {
         showcaseImages: imageArray(payload.hero?.showcaseImages),
@@ -36,46 +37,46 @@ export async function handler(event) {
         artistImages: imageItemArray(payload.aboutSection?.artistImages),
       },
       socialSection: {
-        instagramIcon: imageField(payload.socialSection?.instagramIcon?.assetId),
-        facebookIcon: imageField(payload.socialSection?.facebookIcon?.assetId),
-        whatsappIcon: imageField(payload.socialSection?.whatsappIcon?.assetId),
-        googleIcon: imageField(payload.socialSection?.googleIcon?.assetId),
+        instagramIcon: imageField(payload.socialSection?.instagramIcon),
+        facebookIcon: imageField(payload.socialSection?.facebookIcon),
+        whatsappIcon: imageField(payload.socialSection?.whatsappIcon),
+        googleIcon: imageField(payload.socialSection?.googleIcon),
       },
       services: {
         bridal: {
-          categoryImage: imageField(payload.services?.bridal?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.bridal?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.bridal?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.bridal?.categoryImage),
+          carouselImage: imageField(payload.services?.bridal?.carouselImage),
+          galleryCover: imageField(payload.services?.bridal?.galleryCover),
           galleryImages: imageArray(payload.services?.bridal?.galleryImages),
         },
         engagement: {
-          categoryImage: imageField(payload.services?.engagement?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.engagement?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.engagement?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.engagement?.categoryImage),
+          carouselImage: imageField(payload.services?.engagement?.carouselImage),
+          galleryCover: imageField(payload.services?.engagement?.galleryCover),
           galleryImages: imageArray(payload.services?.engagement?.galleryImages),
         },
         portrait: {
-          categoryImage: imageField(payload.services?.portrait?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.portrait?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.portrait?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.portrait?.categoryImage),
+          carouselImage: imageField(payload.services?.portrait?.carouselImage),
+          galleryCover: imageField(payload.services?.portrait?.galleryCover),
           galleryImages: imageArray(payload.services?.portrait?.galleryImages),
         },
         babyShower: {
-          categoryImage: imageField(payload.services?.babyShower?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.babyShower?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.babyShower?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.babyShower?.categoryImage),
+          carouselImage: imageField(payload.services?.babyShower?.carouselImage),
+          galleryCover: imageField(payload.services?.babyShower?.galleryCover),
           galleryImages: imageArray(payload.services?.babyShower?.galleryImages),
         },
         festival: {
-          categoryImage: imageField(payload.services?.festival?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.festival?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.festival?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.festival?.categoryImage),
+          carouselImage: imageField(payload.services?.festival?.carouselImage),
+          galleryCover: imageField(payload.services?.festival?.galleryCover),
           galleryImages: imageArray(payload.services?.festival?.galleryImages),
         },
         guest: {
-          categoryImage: imageField(payload.services?.guest?.categoryImage?.assetId),
-          carouselImage: imageField(payload.services?.guest?.carouselImage?.assetId),
-          galleryCover: imageField(payload.services?.guest?.galleryCover?.assetId),
+          categoryImage: imageField(payload.services?.guest?.categoryImage),
+          carouselImage: imageField(payload.services?.guest?.carouselImage),
+          galleryCover: imageField(payload.services?.guest?.galleryCover),
           galleryImages: imageArray(payload.services?.guest?.galleryImages),
         },
       },
@@ -83,5 +84,10 @@ export async function handler(event) {
     })
     .commit();
 
-  return json(200, { ok: true });
+    return json(200, { ok: true });
+  } catch (error) {
+    return json(500, {
+      error: error instanceof Error ? error.message : "Image save failed.",
+    });
+  }
 }
