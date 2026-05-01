@@ -1,23 +1,10 @@
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
-  type ReactNode,
 } from "react";
-import {
-  ArrowDown,
-  ArrowUp,
-  ImagePlus,
-  LoaderCircle,
-  Lock,
-  LogOut,
-  RefreshCcw,
-  RotateCcw,
-  UploadCloud,
-} from "lucide-react";
 
 import {
   clearAdminSession,
@@ -27,19 +14,48 @@ import {
   saveAdminImages,
   uploadAdminImage,
 } from "@/lib/admin/api";
-import type {
-  AdminImage,
-  AdminImagesState,
-  AdminServiceImages,
-} from "@/lib/admin/types";
+import type { AdminImage, AdminImagesState } from "@/lib/admin/types";
 import { defaultSiteContent } from "@/lib/cms/default-site-content";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
+type ServiceKey = keyof AdminImagesState["services"];
+type SearchItem = {
+  id: string;
+  title: string;
+  image?: AdminImage;
+  defaultImage?: AdminImage;
+  reset: () => Promise<void>;
+  replace: (file: File) => Promise<void>;
+};
 
 const asDefaultImage = (url: string): AdminImage => ({
   assetId: `default:${url}`,
   url,
 });
+
+const serviceEntries: Array<{ key: ServiceKey; label: string }> = [
+  { key: "bridal", label: "Bridal" },
+  { key: "engagement", label: "Engagement" },
+  { key: "portrait", label: "Portrait" },
+  { key: "babyShower", label: "Baby Shower" },
+  { key: "festival", label: "Stylish" },
+  { key: "guest", label: "Guest" },
+];
+
+const homeIds = [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+];
+
+const galleryIds = "abcdefghijklmnopqrstuvwxyz".split("");
 
 const defaultImagesState: AdminImagesState = {
   business: {
@@ -102,18 +118,6 @@ const defaultImagesState: AdminImagesState = {
   ),
 };
 
-const serviceEntries: Array<{
-  key: keyof AdminImagesState["services"];
-  label: string;
-}> = [
-  { key: "bridal", label: "Bridal" },
-  { key: "engagement", label: "Engagement" },
-  { key: "portrait", label: "Portrait" },
-  { key: "babyShower", label: "Baby Shower" },
-  { key: "festival", label: "Festival / Stylish" },
-  { key: "guest", label: "Guest" },
-];
-
 const emptyState: AdminImagesState = {
   business: {},
   hero: { showcaseImages: [] },
@@ -130,69 +134,65 @@ const emptyState: AdminImagesState = {
   testimonials: [],
 };
 
-type MainTab = "home" | "gallery" | "services";
-type ServiceKey = keyof AdminImagesState["services"];
-type ServiceSingleField = keyof Omit<AdminServiceImages, "galleryImages">;
+const mergeImages = (data: AdminImagesState): AdminImagesState => ({
+  ...emptyState,
+  ...data,
+  business: {
+    logo: data.business?.logo,
+  },
+  hero: {
+    showcaseImages: data.hero?.showcaseImages ?? [],
+  },
+  aboutSection: {
+    artistImages: data.aboutSection?.artistImages ?? [],
+  },
+  socialSection: {
+    instagramIcon: data.socialSection?.instagramIcon,
+    facebookIcon: data.socialSection?.facebookIcon,
+    whatsappIcon: data.socialSection?.whatsappIcon,
+    googleIcon: data.socialSection?.googleIcon,
+  },
+  services: {
+    bridal: data.services?.bridal ?? emptyState.services.bridal,
+    engagement: data.services?.engagement ?? emptyState.services.engagement,
+    portrait: data.services?.portrait ?? emptyState.services.portrait,
+    babyShower: data.services?.babyShower ?? emptyState.services.babyShower,
+    festival: data.services?.festival ?? emptyState.services.festival,
+    guest: data.services?.guest ?? emptyState.services.guest,
+  },
+  testimonials: data.testimonials ?? [],
+});
 
-const mainTabs: Array<{ key: MainTab; label: string }> = [
-  { key: "home", label: "Home" },
-  { key: "gallery", label: "Gallery" },
-  { key: "services", label: "Services" },
-];
-
-const getService = (state: AdminImagesState, key: ServiceKey) =>
-  state.services[key] ?? emptyState.services[key];
-
-function Section({
+function ImageRow({
+  id,
   title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="rounded-lg border border-amber-300/35 bg-white/85 p-4 shadow-[0_12px_30px_rgba(90,42,23,0.08)] sm:p-5">
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-[#5a2a17]">{title}</h2>
-        {description ? (
-          <p className="mt-2 text-sm leading-6 text-[#7a5842]">{description}</p>
-        ) : null}
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function SingleImageEditor({
-  label,
   image,
   defaultImage,
   onReset,
   onReplace,
 }: {
-  label: string;
+  id: string;
+  title: string;
   image?: AdminImage;
   defaultImage?: AdminImage;
   onReset: () => Promise<void>;
   onReplace: (file: File) => Promise<void>;
 }) {
-  const [isUploading, setIsUploading] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
+  const [busy, setBusy] = useState<"reset" | "replace" | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const replaceFile = async (file?: File) => {
     if (!file) return;
-    setIsUploading(true);
+
+    setBusy("replace");
     try {
       await onReplace(file);
     } finally {
-      setIsUploading(false);
+      setBusy(null);
     }
   };
 
-  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleReplace = async (event: ChangeEvent<HTMLInputElement>) => {
     try {
       await replaceFile(event.target.files?.[0]);
     } finally {
@@ -201,325 +201,72 @@ function SingleImageEditor({
   };
 
   const handleReset = async () => {
-    setIsResetting(true);
+    if (!defaultImage) return;
+
+    setBusy("reset");
     try {
       await onReset();
     } finally {
-      setIsResetting(false);
+      setBusy(null);
     }
   };
 
   return (
-    <div className="rounded-lg border border-amber-200/70 bg-[#fffaf0] p-3">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <p className="min-w-0 text-sm font-semibold text-[#6b351d]">
-          {label}
-        </p>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            disabled={!defaultImage || isResetting}
-            onClick={() => void handleReset()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#fff3dd] text-[#7a4b24] transition hover:bg-[#ffe7b9] disabled:opacity-40"
-            aria-label={`Reset ${label} to default`}
-            title="Reset to default"
-          >
-            {isResetting ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <RotateCcw className="h-4 w-4" />
-            )}
-          </button>
-          <label
-            className="inline-flex h-8 cursor-pointer items-center justify-center rounded-md bg-amber-400 px-3 text-xs font-semibold text-[#2a120d] transition hover:bg-amber-300"
-            title="Choose replacement image"
-          >
-            {isUploading ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <ImagePlus className="h-4 w-4" />
-            )}
-            Replace
-            <input type="file" accept="image/*" className="hidden" onChange={handleChange} />
-          </label>
-        </div>
+    <div
+      onDragEnter={(event) => {
+        event.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragOver={(event) => event.preventDefault()}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        void replaceFile(event.dataTransfer.files?.[0]);
+      }}
+      className={`flex flex-col gap-3 border p-4 sm:flex-row sm:items-center ${
+        isDragging ? "border-blue-500 bg-blue-50" : "border-neutral-300"
+      }`}
+    >
+      <div className="w-36 shrink-0">
+        <div className="font-semibold text-neutral-900">{id}</div>
+        <div className="text-sm text-neutral-600">{title}</div>
       </div>
-      <div
-        onDragEnter={(event) => {
-          event.preventDefault();
-          setIsDragging(true);
-        }}
-        onDragOver={(event) => event.preventDefault()}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={(event) => {
-          event.preventDefault();
-          setIsDragging(false);
-          void replaceFile(event.dataTransfer.files?.[0]);
-        }}
-        className={`flex items-center gap-3 rounded-lg border border-dashed bg-white p-2 transition ${
-          isDragging ? "border-emerald-500 ring-2 ring-emerald-100" : "border-amber-200/80"
-        }`}
-      >
-        <div className="h-28 w-28 shrink-0 overflow-hidden rounded-md border border-amber-100 bg-[#fff8ee]">
-          {image ? (
-            <img
-              src={image.url}
-              alt={label}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-xs text-[#8a654e]">
-              No image
-            </div>
-          )}
-        </div>
-        <div className="min-w-0 text-xs leading-5 text-[#7a5842]">
-          <UploadCloud className="mb-1 h-4 w-4 text-[#9a5a1a]" />
-          <p className="font-medium text-[#5a2a17]">Drop image here</p>
-          <p className="truncate">{image?.url ?? "No image uploaded yet"}</p>
-        </div>
+
+      <div className="h-24 w-24 shrink-0 overflow-hidden border border-neutral-300 bg-neutral-100">
+        {image?.url ? (
+          <img src={image.url} alt={title} className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full items-center justify-center text-xs text-neutral-500">
+            empty
+          </div>
+        )}
       </div>
-    </div>
-  );
-}
 
-function ImageListEditor({
-  title,
-  images,
-  defaultImages,
-  onAdd,
-  onResetAt,
-  onReplaceAt,
-  onMove,
-}: {
-  title: string;
-  images: AdminImage[];
-  defaultImages: AdminImage[];
-  onAdd: (file: File) => Promise<void>;
-  onResetAt: (index: number) => Promise<void>;
-  onReplaceAt: (index: number, file: File) => Promise<void>;
-  onMove: (from: number, to: number) => Promise<void>;
-}) {
-  const [busyKey, setBusyKey] = useState<string | null>(null);
-  const [dragIndex, setDragIndex] = useState<number | "add" | null>(null);
+      <div className="min-w-0 flex-1 text-xs text-neutral-500">
+        <div className="truncate">{image?.url ?? "No image set"}</div>
+      </div>
 
-  const addFile = async (file?: File) => {
-    if (!file) return;
-    setBusyKey("add");
-    try {
-      await onAdd(file);
-    } finally {
-      setBusyKey(null);
-    }
-  };
-
-  const replaceFile = async (index: number, file?: File) => {
-    if (!file) return;
-    setBusyKey(`replace-${index}`);
-    try {
-      await onReplaceAt(index, file);
-    } finally {
-      setBusyKey(null);
-    }
-  };
-
-  const handleAdd = async (event: ChangeEvent<HTMLInputElement>) => {
-    try {
-      await addFile(event.target.files?.[0]);
-    } finally {
-      event.target.value = "";
-    }
-  };
-
-  const handleReplace =
-    (index: number) => async (event: ChangeEvent<HTMLInputElement>) => {
-      try {
-        await replaceFile(index, event.target.files?.[0]);
-      } finally {
-        event.target.value = "";
-      }
-    };
-
-  const handleReset = async (index: number) => {
-    setBusyKey(`reset-${index}`);
-    try {
-      await onResetAt(index);
-    } finally {
-      setBusyKey(null);
-    }
-  };
-
-  return (
-    <div className="rounded-lg border border-amber-200/70 bg-[#fffaf0] p-3">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-[#6b351d]">
-          {title}
-        </p>
-        <label
-          className="inline-flex h-8 cursor-pointer items-center gap-2 rounded-md bg-amber-400 px-3 text-xs font-semibold text-[#2a120d] transition hover:bg-amber-300"
-          title="Add image"
+      <div className="flex gap-2">
+        <button
+          type="button"
+          disabled={!defaultImage || busy !== null}
+          onClick={() => void handleReset()}
+          className="border border-neutral-400 px-3 py-2 text-sm disabled:opacity-50"
         >
-          {busyKey === "add" ? (
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-          ) : (
-            <ImagePlus className="h-4 w-4" />
-          )}
-          Add Image
-          <input type="file" accept="image/*" className="hidden" onChange={handleAdd} />
+          {busy === "reset" ? "Resetting..." : "Reset"}
+        </button>
+
+        <label className="cursor-pointer border border-neutral-400 px-3 py-2 text-sm">
+          {busy === "replace" ? "Uploading..." : "Replace"}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            disabled={busy !== null}
+            onChange={handleReplace}
+          />
         </label>
-      </div>
-
-      {images.length === 0 ? (
-        <div
-          onDragEnter={(event) => {
-            event.preventDefault();
-            setDragIndex("add");
-          }}
-          onDragOver={(event) => event.preventDefault()}
-          onDragLeave={() => setDragIndex(null)}
-          onDrop={(event) => {
-            event.preventDefault();
-            setDragIndex(null);
-            void addFile(event.dataTransfer.files?.[0]);
-          }}
-          className={`rounded-lg border border-dashed px-4 py-10 text-center text-sm text-[#8a654e] ${
-            dragIndex === "add" ? "border-emerald-500 bg-emerald-50" : "border-amber-300/70"
-          }`}
-        >
-          No images yet. Use "Add Image" to create the list.
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {images.map((image, index) => (
-            <div
-              key={`${image.assetId}-${index}`}
-              onDragEnter={(event) => {
-                event.preventDefault();
-                setDragIndex(index);
-              }}
-              onDragOver={(event) => event.preventDefault()}
-              onDragLeave={() => setDragIndex(null)}
-              onDrop={(event) => {
-                event.preventDefault();
-                setDragIndex(null);
-                void replaceFile(index, event.dataTransfer.files?.[0]);
-              }}
-              className={`rounded-lg border bg-white p-2 transition ${
-                dragIndex === index
-                  ? "border-emerald-500 ring-2 ring-emerald-100"
-                  : "border-amber-200/70"
-              }`}
-            >
-              <div className="flex gap-3">
-                <img
-                  src={image.url}
-                  alt={`${title} ${index + 1}`}
-                  className="h-28 w-28 shrink-0 rounded-md object-cover"
-                  loading="lazy"
-                />
-                <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
-                  <span className="text-xs font-semibold text-[#8a654e]">
-                  #{index + 1}
-                </span>
-                  <p className="truncate text-xs text-[#7a5842]">{image.url}</p>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                  <button
-                    type="button"
-                    disabled={index === 0}
-                    onClick={() => void onMove(index, index - 1)}
-                    className="rounded-md border border-amber-200 bg-white p-1.5 text-[#7a4b24] disabled:opacity-40"
-                    aria-label={`Move ${title} ${index + 1} up`}
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={index === images.length - 1}
-                    onClick={() => void onMove(index, index + 1)}
-                    className="rounded-md border border-amber-200 bg-white p-1.5 text-[#7a4b24] disabled:opacity-40"
-                    aria-label={`Move ${title} ${index + 1} down`}
-                  >
-                    <ArrowDown className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!defaultImages[index] || busyKey === `reset-${index}`}
-                    onClick={() => void handleReset(index)}
-                    className="rounded-md bg-[#fff3dd] p-1.5 text-[#7a4b24] transition hover:bg-[#ffe7b9] disabled:opacity-40"
-                    aria-label={`Reset ${title} ${index + 1} to default`}
-                    title="Reset to default"
-                  >
-                    {busyKey === `reset-${index}` ? (
-                      <LoaderCircle className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RotateCcw className="h-4 w-4" />
-                    )}
-                  </button>
-                  <label
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-[#fff3dd] px-2 py-1.5 text-xs font-semibold text-[#7a4b24] transition hover:bg-[#ffe7b9]"
-                    title="Replace image"
-                  >
-                    {busyKey === `replace-${index}` ? (
-                      <LoaderCircle className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RefreshCcw className="h-4 w-4" />
-                    )}
-                    Replace
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleReplace(index)}
-                    />
-                  </label>
-                </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ServiceEditor({
-  label,
-  service,
-  defaultService,
-  onResetSingle,
-  onReplaceSingle,
-}: {
-  label: string;
-  service: AdminServiceImages;
-  defaultService: AdminServiceImages;
-  onResetSingle: (
-    field: keyof Omit<AdminServiceImages, "galleryImages">
-  ) => Promise<void>;
-  onReplaceSingle: (
-    field: keyof Omit<AdminServiceImages, "galleryImages">,
-    file: File
-  ) => Promise<void>;
-}) {
-  return (
-    <div className="space-y-4 rounded-lg border border-amber-200/70 bg-[#fff8ee] p-4">
-      <h3 className="text-lg font-semibold text-[#5a2a17]">{label}</h3>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <SingleImageEditor
-          label="Category Image"
-          image={service.categoryImage}
-          defaultImage={defaultService.categoryImage}
-          onReset={() => onResetSingle("categoryImage")}
-          onReplace={(file) => onReplaceSingle("categoryImage", file)}
-        />
-        <SingleImageEditor
-          label="Carousel Image"
-          image={service.carouselImage}
-          defaultImage={defaultService.carouselImage}
-          onReset={() => onResetSingle("carouselImage")}
-          onReplace={(file) => onReplaceSingle("carouselImage", file)}
-        />
       </div>
     </div>
   );
@@ -529,12 +276,12 @@ export function AdminPage() {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [images, setImages] = useState<AdminImagesState>(emptyState);
+  const [query, setQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthLoading, setIsAuthLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("idle");
-  const [activeTab, setActiveTab] = useState<MainTab>("home");
-  const [activeGallery, setActiveGallery] = useState<ServiceKey>("bridal");
+  const [error, setError] = useState<string | null>(null);
   const imagesRef = useRef(images);
 
   useEffect(() => {
@@ -542,13 +289,12 @@ export function AdminPage() {
   }, [images]);
 
   useEffect(() => {
-    const existing = getAdminSession();
-    if (!existing) {
+    const session = getAdminSession();
+    if (session) {
+      setToken(session);
+    } else {
       setIsLoading(false);
-      return;
     }
-
-    setToken(existing);
   }, []);
 
   useEffect(() => {
@@ -557,34 +303,7 @@ export function AdminPage() {
     setIsLoading(true);
     fetchAdminImages(token)
       .then((data) => {
-        const nextImages = {
-          ...emptyState,
-          ...data,
-          business: {
-            logo: data.business?.logo,
-          },
-          hero: {
-            showcaseImages: data.hero?.showcaseImages ?? [],
-          },
-          aboutSection: {
-            artistImages: data.aboutSection?.artistImages ?? [],
-          },
-          socialSection: {
-            instagramIcon: data.socialSection?.instagramIcon,
-            facebookIcon: data.socialSection?.facebookIcon,
-            whatsappIcon: data.socialSection?.whatsappIcon,
-            googleIcon: data.socialSection?.googleIcon,
-          },
-          services: {
-            bridal: data.services?.bridal ?? emptyState.services.bridal,
-            engagement: data.services?.engagement ?? emptyState.services.engagement,
-            portrait: data.services?.portrait ?? emptyState.services.portrait,
-            babyShower: data.services?.babyShower ?? emptyState.services.babyShower,
-            festival: data.services?.festival ?? emptyState.services.festival,
-            guest: data.services?.guest ?? emptyState.services.guest,
-          },
-          testimonials: data.testimonials ?? [],
-        };
+        const nextImages = mergeImages(data);
         imagesRef.current = nextImages;
         setImages(nextImages);
         setError(null);
@@ -600,38 +319,31 @@ export function AdminPage() {
   const commitImages = async (
     updater: (current: AdminImagesState) => AdminImagesState
   ) => {
-    if (!token) return;
+    if (!token) {
+      setError("Session not found. Login again.");
+      return;
+    }
 
-    const nextState = updater(imagesRef.current);
-    imagesRef.current = nextState;
-    setImages(nextState);
+    const nextImages = updater(imagesRef.current);
+    imagesRef.current = nextImages;
+    setImages(nextImages);
     setSaveState("saving");
     setError(null);
 
     try {
-      await saveAdminImages(token, nextState);
+      await saveAdminImages(token, nextImages);
       setSaveState("saved");
       window.setTimeout(() => setSaveState("idle"), 1200);
     } catch (err) {
       setSaveState("error");
-      setError(err instanceof Error ? err.message : "Failed to save changes.");
+      setError(err instanceof Error ? err.message : "Save failed.");
     }
   };
 
-  const uploadAndGetImage = async (file: File) => {
-    if (!token) {
-      throw new Error("Missing session.");
-    }
-
+  const upload = async (file: File) => {
+    if (!token) throw new Error("Session not found. Login again.");
     return uploadAdminImage(token, file);
   };
-
-  const authStatusLabel = useMemo(() => {
-    if (saveState === "saving") return "Saving";
-    if (saveState === "saved") return "Saved";
-    if (saveState === "error") return "Error";
-    return "Ready";
-  }, [saveState]);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -649,52 +361,49 @@ export function AdminPage() {
     }
   };
 
-  const handleLogout = () => {
+  const logout = () => {
     clearAdminSession();
     setToken(null);
     imagesRef.current = emptyState;
     setImages(emptyState);
   };
 
-  const moveImage = (list: AdminImage[], from: number, to: number) => {
-    const next = [...list];
-    const [moved] = next.splice(from, 1);
-    next.splice(to, 0, moved);
-    return next;
+  const replaceHomeImage = async (index: number, file: File) => {
+    const uploaded = await upload(file);
+    await commitImages((current) => {
+      const showcaseImages = [...current.hero.showcaseImages];
+      showcaseImages[index] = uploaded;
+      return { ...current, hero: { showcaseImages } };
+    });
   };
 
-  const updateHeroImages = async (
-    updater: (currentImages: AdminImage[]) => AdminImage[]
-  ) => {
+  const resetHomeImage = async (index: number) => {
+    const defaultImage = defaultImagesState.hero.showcaseImages[index];
+    if (!defaultImage) return;
+
+    await commitImages((current) => {
+      const showcaseImages = [...current.hero.showcaseImages];
+      showcaseImages[index] = defaultImage;
+      return { ...current, hero: { showcaseImages } };
+    });
+  };
+
+  const replaceGalleryCover = async (serviceKey: ServiceKey, file: File) => {
+    const uploaded = await upload(file);
     await commitImages((current) => ({
       ...current,
-      hero: { showcaseImages: updater(current.hero.showcaseImages) },
+      services: {
+        ...current.services,
+        [serviceKey]: {
+          ...current.services[serviceKey],
+          galleryCover: uploaded,
+        },
+      },
     }));
   };
 
-  const updateArtistImages = async (
-    updater: (currentImages: AdminImage[]) => AdminImage[]
-  ) => {
-    await commitImages((current) => ({
-      ...current,
-      aboutSection: { artistImages: updater(current.aboutSection.artistImages) },
-    }));
-  };
-
-  const updateTestimonials = async (
-    updater: (currentImages: AdminImage[]) => AdminImage[]
-  ) => {
-    await commitImages((current) => ({
-      ...current,
-      testimonials: updater(current.testimonials),
-    }));
-  };
-
-  const resetServiceSingle = async (
-    serviceKey: ServiceKey,
-    field: ServiceSingleField
-  ) => {
-    const defaultImage = defaultImagesState.services[serviceKey][field];
+  const resetGalleryCover = async (serviceKey: ServiceKey) => {
+    const defaultImage = defaultImagesState.services[serviceKey].galleryCover;
     if (!defaultImage) return;
 
     await commitImages((current) => ({
@@ -702,94 +411,111 @@ export function AdminPage() {
       services: {
         ...current.services,
         [serviceKey]: {
-          ...getService(current, serviceKey),
-          [field]: defaultImage,
+          ...current.services[serviceKey],
+          galleryCover: defaultImage,
         },
       },
     }));
   };
 
-  const replaceServiceSingle = async (
+  const replaceGalleryImage = async (
     serviceKey: ServiceKey,
-    field: ServiceSingleField,
+    index: number,
     file: File
   ) => {
-    const uploaded = await uploadAndGetImage(file);
-    await commitImages((current) => ({
-      ...current,
-      services: {
-        ...current.services,
-        [serviceKey]: {
-          ...getService(current, serviceKey),
-          [field]: uploaded,
+    const uploaded = await upload(file);
+    await commitImages((current) => {
+      const galleryImages = [...current.services[serviceKey].galleryImages];
+      galleryImages[index] = uploaded;
+      return {
+        ...current,
+        services: {
+          ...current.services,
+          [serviceKey]: {
+            ...current.services[serviceKey],
+            galleryImages,
+          },
         },
-      },
-    }));
+      };
+    });
   };
 
-  const updateServiceGallery = async (
-    serviceKey: ServiceKey,
-    updater: (currentImages: AdminImage[]) => AdminImage[]
-  ) => {
-    await commitImages((current) => ({
-      ...current,
-      services: {
-        ...current.services,
-        [serviceKey]: {
-          ...getService(current, serviceKey),
-          galleryImages: updater(getService(current, serviceKey).galleryImages),
+  const resetGalleryImage = async (serviceKey: ServiceKey, index: number) => {
+    const defaultImage = defaultImagesState.services[serviceKey].galleryImages[index];
+    if (!defaultImage) return;
+
+    await commitImages((current) => {
+      const galleryImages = [...current.services[serviceKey].galleryImages];
+      galleryImages[index] = defaultImage;
+      return {
+        ...current,
+        services: {
+          ...current.services,
+          [serviceKey]: {
+            ...current.services[serviceKey],
+            galleryImages,
+          },
         },
-      },
-    }));
+      };
+    });
   };
+
+  const searchItems: SearchItem[] = [
+    ...images.hero.showcaseImages.map((image, index) => ({
+      id: homeIds[index] ?? `home-${index + 1}`,
+      title: "Home hero image",
+      image,
+      defaultImage: defaultImagesState.hero.showcaseImages[index],
+      reset: () => resetHomeImage(index),
+      replace: (file: File) => replaceHomeImage(index, file),
+    })),
+    ...serviceEntries.flatMap((entry) => [
+      {
+        id: `${entry.key} cover`,
+        title: `${entry.label} gallery cover`,
+        image: images.services[entry.key].galleryCover,
+        defaultImage: defaultImagesState.services[entry.key].galleryCover,
+        reset: () => resetGalleryCover(entry.key),
+        replace: (file: File) => replaceGalleryCover(entry.key, file),
+      },
+      ...images.services[entry.key].galleryImages.map((image, index) => ({
+        id: `${entry.key} ${galleryIds[index] ?? `image-${index + 1}`}`,
+        title: `${entry.label} gallery image`,
+        image,
+        defaultImage: defaultImagesState.services[entry.key].galleryImages[index],
+        reset: () => resetGalleryImage(entry.key, index),
+        replace: (file: File) => replaceGalleryImage(entry.key, index, file),
+      })),
+    ]),
+  ];
+
+  const normalize = (value: string) =>
+    value.trim().toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ");
+
+  const foundItem =
+    submittedQuery.trim().length > 0
+      ? searchItems.find((item) => normalize(item.id) === normalize(submittedQuery))
+      : undefined;
 
   if (!token) {
     return (
-      <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-16">
-        <form
-          onSubmit={handleLogin}
-          className="w-full max-w-md rounded-[2rem] border border-amber-300/35 bg-white/80 p-8 shadow-[0_24px_70px_rgba(176,106,31,0.10)] backdrop-blur-md"
-        >
-          <div className="mb-6 flex items-center gap-3 text-[#5a2a17]">
-            <div className="rounded-2xl bg-amber-100 p-3">
-              <Lock className="h-6 w-6 text-[#9a5a1a]" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5a1a]">
-                Owner Access
-              </p>
-              <h1 className="text-2xl font-semibold">Image Dashboard</h1>
-            </div>
-          </div>
-
-          <label className="block text-sm font-medium text-[#7a5842]">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="mt-2 h-12 w-full rounded-2xl border border-amber-300/45 bg-white px-4 text-[#5a2a17] outline-none ring-0 transition focus:border-amber-400"
-              placeholder="Enter owner password"
-            />
-          </label>
-
-          {error ? (
-            <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </p>
-          ) : null}
-
+      <main className="min-h-screen bg-white p-6 text-neutral-900">
+        <form onSubmit={handleLogin} className="mx-auto mt-20 max-w-sm space-y-4 border p-4">
+          <h1 className="text-xl font-semibold">Admin Login</h1>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Password"
+            className="w-full border px-3 py-2"
+          />
+          {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <button
             type="submit"
             disabled={isAuthLoading}
-            className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-amber-400 px-5 text-sm font-semibold text-[#2a120d] transition hover:bg-amber-300 disabled:opacity-60"
+            className="w-full border border-neutral-500 px-3 py-2"
           >
-            {isAuthLoading ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <Lock className="h-4 w-4" />
-            )}
-            Unlock Dashboard
+            {isAuthLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </main>
@@ -797,334 +523,65 @@ export function AdminPage() {
   }
 
   return (
-    <main className="relative z-10 min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="rounded-[2rem] border border-amber-300/35 bg-white/80 p-6 shadow-[0_18px_45px_rgba(176,106,31,0.10)]">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#9a5a1a]">
-                Owner Dashboard
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold text-[#5a2a17]">
-                Manage Website Images
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#7a5842]">
-                Upload, replace, and reorder images. Every change is saved to Sanity immediately.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-full border border-amber-200 bg-[#fff8ee] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#7a4b24]">
-                {authStatusLabel}
-              </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex items-center gap-2 rounded-full border border-amber-300/45 bg-white px-4 py-2 text-sm font-semibold text-[#7a4b24] transition hover:bg-[#fff4e4]"
-              >
-                <LogOut className="h-4 w-4" />
-                Log Out
-              </button>
-            </div>
+    <main className="min-h-screen bg-white p-4 text-neutral-900 sm:p-6">
+      <div className="mx-auto max-w-5xl space-y-4">
+        <header className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+            <p className="text-sm text-neutral-600">Status: {saveState}</p>
           </div>
-          {error ? (
-            <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </p>
-          ) : null}
+          <button type="button" onClick={logout} className="border px-3 py-2">
+            Logout
+          </button>
         </header>
 
-        {isLoading ? (
-          <div className="flex min-h-[40vh] items-center justify-center rounded-[2rem] border border-amber-300/35 bg-white/70">
-            <LoaderCircle className="h-8 w-8 animate-spin text-[#9a5a1a]" />
-          </div>
-        ) : (
-          <div className="space-y-5">
-            <nav className="rounded-lg border border-amber-300/35 bg-white/85 p-2 shadow-[0_12px_30px_rgba(90,42,23,0.08)]">
-              <div className="grid gap-2 sm:grid-cols-3">
-                {mainTabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`h-11 rounded-md px-4 text-sm font-semibold transition ${
-                      activeTab === tab.key
-                        ? "bg-[#5a2a17] text-white shadow-sm"
-                        : "bg-[#fff8ee] text-[#7a4b24] hover:bg-[#ffe7b9]"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </nav>
+        {error ? <p className="border border-red-300 p-3 text-red-700">{error}</p> : null}
 
-            {activeTab === "home" ? (
-              <div className="space-y-5">
-                <Section title="Home Images">
-                  <div className="space-y-4">
-                    <SingleImageEditor
-                      label="Logo"
-                      image={images.business.logo}
-                      defaultImage={defaultImagesState.business.logo}
-                      onReset={async () => {
-                        const defaultImage = defaultImagesState.business.logo;
-                        if (!defaultImage) return;
-                        await commitImages((current) => ({
-                          ...current,
-                          business: { logo: defaultImage },
-                        }));
-                      }}
-                      onReplace={async (file) => {
-                        const uploaded = await uploadAndGetImage(file);
-                        await commitImages((current) => ({
-                          ...current,
-                          business: { logo: uploaded },
-                        }));
-                      }}
-                    />
+        {isLoading ? <p>Loading...</p> : null}
 
-                    <ImageListEditor
-                      title="Hero Showcase Images"
-                      images={images.hero.showcaseImages}
-                      defaultImages={defaultImagesState.hero.showcaseImages}
-                      onAdd={async (file) => {
-                        const uploaded = await uploadAndGetImage(file);
-                        await updateHeroImages((current) => [...current, uploaded]);
-                      }}
-                      onResetAt={async (index) => {
-                        const defaultImage = defaultImagesState.hero.showcaseImages[index];
-                        if (!defaultImage) return;
-                        await updateHeroImages((current) => {
-                          const next = [...current];
-                          next[index] = defaultImage;
-                          return next;
-                        });
-                      }}
-                      onReplaceAt={async (index, file) => {
-                        const uploaded = await uploadAndGetImage(file);
-                        await updateHeroImages((current) => {
-                          const next = [...current];
-                          next[index] = uploaded;
-                          return next;
-                        });
-                      }}
-                      onMove={async (from, to) => {
-                        await updateHeroImages((current) => moveImage(current, from, to));
-                      }}
-                    />
+        {!isLoading ? (
+          <section className="space-y-4 border border-neutral-300 p-4">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                setSubmittedQuery(query);
+              }}
+              className="space-y-2"
+            >
+              <label className="block text-sm font-semibold" htmlFor="image-search">
+                Search image ID
+              </label>
+              <input
+                id="image-search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Try: one, two, bridal a, bridal cover"
+                className="w-full border border-neutral-400 px-3 py-2"
+              />
+              <p className="text-xs text-neutral-500">
+                Home IDs: one, two, three... Gallery IDs: bridal a, bridal b,
+                engagement cover, guest a...
+              </p>
+            </form>
 
-                    <ImageListEditor
-                      title="About Section Artist Images"
-                      images={images.aboutSection.artistImages}
-                      defaultImages={defaultImagesState.aboutSection.artistImages}
-                      onAdd={async (file) => {
-                        const uploaded = await uploadAndGetImage(file);
-                        await updateArtistImages((current) => [...current, uploaded]);
-                      }}
-                      onResetAt={async (index) => {
-                        const defaultImage =
-                          defaultImagesState.aboutSection.artistImages[index];
-                        if (!defaultImage) return;
-                        await updateArtistImages((current) => {
-                          const next = [...current];
-                          next[index] = defaultImage;
-                          return next;
-                        });
-                      }}
-                      onReplaceAt={async (index, file) => {
-                        const uploaded = await uploadAndGetImage(file);
-                        await updateArtistImages((current) => {
-                          const next = [...current];
-                          next[index] = uploaded;
-                          return next;
-                        });
-                      }}
-                      onMove={async (from, to) => {
-                        await updateArtistImages((current) => moveImage(current, from, to));
-                      }}
-                    />
-                  </div>
-                </Section>
-
-                <Section title="Social Icons">
-                  <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
-                    {[
-                      ["instagramIcon", "Instagram Icon"],
-                      ["facebookIcon", "Facebook Icon"],
-                      ["whatsappIcon", "WhatsApp Icon"],
-                      ["googleIcon", "Google Icon"],
-                    ].map(([field, label]) => (
-                      <SingleImageEditor
-                        key={field}
-                        label={label}
-                        image={
-                          images.socialSection[
-                            field as keyof AdminImagesState["socialSection"]
-                          ]
-                        }
-                        defaultImage={
-                          defaultImagesState.socialSection[
-                            field as keyof AdminImagesState["socialSection"]
-                          ]
-                        }
-                        onReset={async () => {
-                          const defaultImage =
-                            defaultImagesState.socialSection[
-                              field as keyof AdminImagesState["socialSection"]
-                            ];
-                          if (!defaultImage) return;
-                          await commitImages((current) => ({
-                            ...current,
-                            socialSection: {
-                              ...current.socialSection,
-                              [field]: defaultImage,
-                            },
-                          }));
-                        }}
-                        onReplace={async (file) => {
-                          const uploaded = await uploadAndGetImage(file);
-                          await commitImages((current) => ({
-                            ...current,
-                            socialSection: {
-                              ...current.socialSection,
-                              [field]: uploaded,
-                            },
-                          }));
-                        }}
-                      />
-                    ))}
-                  </div>
-                </Section>
-
-                <Section title="Testimonials">
-                  <ImageListEditor
-                    title="Testimonial Images"
-                    images={images.testimonials}
-                    defaultImages={defaultImagesState.testimonials}
-                    onAdd={async (file) => {
-                      const uploaded = await uploadAndGetImage(file);
-                      await updateTestimonials((current) => [...current, uploaded]);
-                    }}
-                    onResetAt={async (index) => {
-                      const defaultImage = defaultImagesState.testimonials[index];
-                      if (!defaultImage) return;
-                      await updateTestimonials((current) => {
-                        const next = [...current];
-                        next[index] = defaultImage;
-                        return next;
-                      });
-                    }}
-                    onReplaceAt={async (index, file) => {
-                      const uploaded = await uploadAndGetImage(file);
-                      await updateTestimonials((current) => {
-                        const next = [...current];
-                        next[index] = uploaded;
-                        return next;
-                      });
-                    }}
-                    onMove={async (from, to) => {
-                      await updateTestimonials((current) => moveImage(current, from, to));
-                    }}
-                  />
-                </Section>
-              </div>
+            {submittedQuery && !foundItem ? (
+              <p className="border border-yellow-300 p-3 text-sm">
+                No image found for "{submittedQuery}".
+              </p>
             ) : null}
 
-            {activeTab === "gallery" ? (
-              <Section
-                title="Gallery"
-                description="Choose a gallery, then manage its cover and individual images in one compact panel."
-              >
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {serviceEntries.map((entry) => (
-                    <button
-                      key={entry.key}
-                      type="button"
-                      onClick={() => setActiveGallery(entry.key)}
-                      className={`h-9 rounded-md px-3 text-xs font-semibold transition ${
-                        activeGallery === entry.key
-                          ? "bg-[#5a2a17] text-white"
-                          : "bg-[#fff3dd] text-[#7a4b24] hover:bg-[#ffe7b9]"
-                      }`}
-                    >
-                      {entry.label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="space-y-4">
-                  <SingleImageEditor
-                    label={`${serviceEntries.find((entry) => entry.key === activeGallery)?.label} Cover Image`}
-                    image={images.services[activeGallery].galleryCover}
-                    defaultImage={defaultImagesState.services[activeGallery].galleryCover}
-                    onReset={() => resetServiceSingle(activeGallery, "galleryCover")}
-                    onReplace={(file) =>
-                      replaceServiceSingle(activeGallery, "galleryCover", file)
-                    }
-                  />
-                  <ImageListEditor
-                    title={`${serviceEntries.find((entry) => entry.key === activeGallery)?.label} Gallery Images`}
-                    images={images.services[activeGallery].galleryImages}
-                    defaultImages={defaultImagesState.services[activeGallery].galleryImages}
-                    onAdd={async (file) => {
-                      const uploaded = await uploadAndGetImage(file);
-                      await updateServiceGallery(activeGallery, (current) => [
-                        ...current,
-                        uploaded,
-                      ]);
-                    }}
-                    onResetAt={async (index) => {
-                      const defaultImage =
-                        defaultImagesState.services[activeGallery].galleryImages[index];
-                      if (!defaultImage) return;
-                      await updateServiceGallery(activeGallery, (current) => {
-                        const next = [...current];
-                        next[index] = defaultImage;
-                        return next;
-                      });
-                    }}
-                    onReplaceAt={async (index, file) => {
-                      const uploaded = await uploadAndGetImage(file);
-                      await updateServiceGallery(activeGallery, (current) => {
-                        const next = [...current];
-                        next[index] = uploaded;
-                        return next;
-                      });
-                    }}
-                    onMove={async (from, to) => {
-                      await updateServiceGallery(activeGallery, (current) =>
-                        moveImage(current, from, to)
-                      );
-                    }}
-                  />
-                </div>
-              </Section>
+            {foundItem ? (
+              <ImageRow
+                id={foundItem.id}
+                title={foundItem.title}
+                image={foundItem.image}
+                defaultImage={foundItem.defaultImage}
+                onReset={foundItem.reset}
+                onReplace={foundItem.replace}
+              />
             ) : null}
-
-            {activeTab === "services" ? (
-              <Section
-                title="Services"
-                description="Manage each service category thumbnail and carousel image."
-              >
-                <div className="grid gap-4 xl:grid-cols-2">
-                  {serviceEntries.map((entry) => (
-                    <ServiceEditor
-                      key={entry.key}
-                      label={entry.label}
-                      service={images.services[entry.key]}
-                      defaultService={defaultImagesState.services[entry.key]}
-                      onResetSingle={(field) => resetServiceSingle(entry.key, field)}
-                      onReplaceSingle={(field, file) =>
-                        replaceServiceSingle(entry.key, field, file)
-                      }
-                    />
-                  ))}
-                </div>
-              </Section>
-            ) : null}
-          </div>
-        )}
+          </section>
+        ) : null}
       </div>
     </main>
   );
